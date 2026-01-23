@@ -2,12 +2,12 @@ import { ClientRedirect } from "./client/ClientRedirect";
 import { createUserService } from "@/core";
 
 type Props = {
-    searchParams: { code: string | undefined }
+    searchParams: Promise<{ code: string | undefined }>
 }
 
 export default async function Page({ searchParams }: Props) {
 
-    const { code } = searchParams;
+    const { code } = await searchParams;
 
     if (code) {
         const { authViaGitHub } = createUserService();
