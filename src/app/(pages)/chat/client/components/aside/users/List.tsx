@@ -1,5 +1,5 @@
 import { Item } from "./elements";
-import { User } from "@/core";
+import { User } from "@/core/models";
 
 type Props = React.HTMLAttributes<HTMLUListElement> & {
     users: User[];

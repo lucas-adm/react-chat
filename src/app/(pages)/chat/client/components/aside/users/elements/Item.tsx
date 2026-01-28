@@ -1,5 +1,5 @@
 import { Avatar } from "@/components"
-import { User } from "@/core";
+import { User } from "@/core/models";
 
 type Props = React.LiHTMLAttributes<HTMLLIElement> & {
     user: User

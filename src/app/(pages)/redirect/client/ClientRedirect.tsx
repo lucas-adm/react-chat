@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect } from "react";
-import { User } from "@/core";
+import { User } from "@/core/models";
 import { useRouter } from "next/navigation";
 import { useUser } from "@/hooks";
 

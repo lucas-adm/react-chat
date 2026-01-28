@@ -2,21 +2,35 @@
 
 import { Aside, Chat, Separator } from "./components";
 import { clsx } from "clsx";
-import { Message, User } from "@/core";
-import { useUser } from "@/hooks";
+import { Message, User } from "@/core/models";
+import { useChat, useMessages, useUser } from "@/hooks";
+import { useEffect } from "react";
 
 type Props = {
     users: User[],
     messages: Message[]
 }
 
-export const Client = ({ users, messages }: Props) => {
+export const Client = ({ users, messages: msgs }: Props) => {
 
+    const { onMessage } = useChat();
     const { user } = useUser();
+    const { messages, setMessages } = useMessages();
+
+    useEffect(() => setMessages(msgs), [msgs, setMessages]);
+
+    useEffect(() => {
+        onMessage(output => {
+            setMessages(prev => prev ? prev.some(m => m.text.id === output.text.id)
+                ? prev : [...prev, output]
+                : [output]
+            )
+        })
+    }, [onMessage, setMessages])
 
     const others = user ? users.filter(u => u.id !== user.id) : users;
 
-    return (
+    if (messages) return (
         <main className="w-screen h-screen flex items-center justify-items-center bg-neutral-100 p-2 inmd:p-0">
             <section className={clsx(
                 'overflow-hidden',

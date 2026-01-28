@@ -1,7 +1,7 @@
 import { Avatar } from "@/components";
 import { clsx } from "clsx";
 import { IconCheck, IconDotsVertical } from "@tabler/icons-react";
-import { Message } from "@/core";
+import { Message } from "@/core/models";
 
 type Props = React.LiHTMLAttributes<HTMLLIElement> & {
     isAuthor: boolean;

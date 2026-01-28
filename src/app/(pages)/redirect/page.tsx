@@ -1,5 +1,5 @@
 import { ClientRedirect } from "./client/ClientRedirect";
-import { createUserService } from "@/core";
+import { createUserService } from "@/core/services";
 
 type Props = {
     searchParams: Promise<{ code: string | undefined }>

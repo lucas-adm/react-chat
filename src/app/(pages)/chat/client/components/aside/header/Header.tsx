@@ -1,7 +1,7 @@
 import { Avatar } from "@/components";
 import { Info, Options } from "./elements";
 import { Separator } from "../../utils";
-import { User } from "@/core";
+import { User } from "@/core/models";
 
 type Props = React.HTMLAttributes<HTMLElement> & {
     user: User | null;

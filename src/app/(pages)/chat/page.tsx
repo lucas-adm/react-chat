@@ -1,5 +1,5 @@
 import { Client } from "./client";
-import { createMessageService, createUserService } from "@/core";
+import { createMessageService, createUserService } from "@/core/services";
 
 export default async function Page() {
 

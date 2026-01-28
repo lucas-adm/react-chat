@@ -1,5 +1,5 @@
 import { Item } from "./elements";
-import { Message, User } from "@/core";
+import { Message, User } from "@/core/models";
 
 type Props = React.HTMLAttributes<HTMLUListElement> & {
     user: User | null;
@@ -11,6 +11,12 @@ export const List = ({ user, messages, ...rest }: Props) => (
         className="overflow-y-scroll scrollbar-hidden flex-1 flex flex-col gap-3"
         {...rest}
     >
-        {messages.map(msg => <Item key={msg.text.id} isAuthor={user === msg.user} message={msg} />)}
+        {messages.map(msg => (
+            <Item
+                key={msg.text.id}
+                isAuthor={user ? user.id === msg.user.id : false}
+                message={msg}
+            />
+        ))}
     </ul>
 )
