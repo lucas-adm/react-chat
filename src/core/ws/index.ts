@@ -5,15 +5,11 @@ export function createWebSocketClient(url: string) {
 
     const client = new Client({
         webSocketFactory: () => new SockJS(`${url}/livechat`),
-        reconnectDelay: 5000,
-        debug: (str) => console.log(str)
+        reconnectDelay: 5000
     })
 
-    function connect(onConnect?: () => void) {
-        client.onConnect = () => {
-            console.log('WebSocket conectado');
-            onConnect?.();
-        }
+    function connect(onConnect: () => void) {
+        client.onConnect = () => onConnect();
         client.activate();
     }
 
@@ -40,5 +36,5 @@ export function createWebSocketClient(url: string) {
         subscribe,
         send,
     }
-    
+
 }

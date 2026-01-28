@@ -1,3 +1,3 @@
-export * from './Chat';
+export * from './WebSocket';
 export * from './User';
 export * from './Messages';
