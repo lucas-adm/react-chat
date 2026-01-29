@@ -1,4 +1,5 @@
-import { Item } from "./elements";
+import { ChatItem, formatDayLabel, groupMessagesByDay } from "@/utils";
+import { Item, Separator } from "./elements";
 import { Message, User } from "@/core/models";
 import { useLayoutEffect, useRef } from "react";
 
@@ -42,19 +43,29 @@ export const List = ({ user, messages, ...rest }: Props) => {
         if (isAtBottomRef.current && bottom) bottom.scrollIntoView({ behavior: "smooth" });
     }, [messages])
 
+    const items: ChatItem[] = groupMessagesByDay(messages);
+
     return (
         <ul
             ref={listRef}
             className="overflow-y-scroll scrollbar-hidden flex-1 flex flex-col gap-3"
             {...rest}
         >
-            {messages.map(msg => (
-                <Item
-                    key={msg.text.id}
-                    isAuthor={user ? user.id === msg.user.id : false}
-                    message={msg}
-                />
-            ))}
+            {items.map(item => {
+                if (item.type === 'day') return (
+                    <Separator key={item.date}>
+                        {formatDayLabel(item.date)}
+                    </Separator>
+                )
+                if (item.type === 'message') return (
+                    <Item
+                        key={item.message.text.id}
+                        isAuthor={user ? user.id === item.message.user.id : false}
+                        message={item.message}
+                    />
+                )
+                return null;
+            })}
             <div aria-hidden ref={bottomRef} />
         </ul>
     )

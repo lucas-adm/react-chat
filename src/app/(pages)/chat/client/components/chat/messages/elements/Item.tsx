@@ -1,5 +1,6 @@
 import { Avatar } from "@/components";
 import { clsx } from "clsx";
+import { formatTime } from "@/utils";
 import { IconCheck, IconDotsVertical } from "@tabler/icons-react";
 import { Message } from "@/core/models";
 
@@ -40,9 +41,9 @@ export const Item = ({ isAuthor, message, ...rest }: Props) => (
             <p className="text-xs text-neutral-500">{message.text.content}</p>
             <footer className="flex items-center justify-between gap-1">
                 <p className="text-2xs text-neutral-400">
-                    {message.text.updated
-                        ? `{${message.text.createdAt} (Editada ${message.text.updatedAt})`
-                        : message.text.createdAt
+                    {message.text.updated && message.text.updatedAt
+                        ? `{${formatTime(message.text.createdAt)} (Editada ${formatTime(message.text.updatedAt)})`
+                        : formatTime(message.text.createdAt)
                     }
                 </p>
                 <span className={clsx(message.text.read ? 'text-sky-600' : 'text-neutral-400')}>
