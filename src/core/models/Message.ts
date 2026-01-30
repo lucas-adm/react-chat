@@ -10,6 +10,16 @@ export type Message = {
         updatedAt: string | null,
         read: boolean,
         updated: boolean,
-        status: 'sending' | 'sent' | 'read'
+        status: 'sending' | 'sent'
+    }
+}
+
+export function normalize(msg: Message, status: 'sending' | 'sent'): Message {
+    return {
+        ...msg,
+        text: {
+            ...msg.text,
+            status: status
+        }
     }
 }

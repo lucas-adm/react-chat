@@ -2,9 +2,9 @@
 
 import { Aside, Chat, Separator } from "./components";
 import { clsx } from "clsx";
-import { Message, User } from "@/core/models";
+import { Message, normalize, User } from "@/core/models";
 import { useChat, useMessages, useUser } from "@/hooks";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 
 type Props = {
     users: User[],
@@ -13,20 +13,40 @@ type Props = {
 
 export const Client = ({ users, messages: msgs }: Props) => {
 
-    const { onMessage } = useChat();
+    const { onMessage, onRead } = useChat();
     const { user } = useUser();
     const { messages, setMessages } = useMessages();
 
-    useEffect(() => setMessages(msgs), [msgs, setMessages]);
+    const unreads: number = useMemo(() => {
+        if (messages) return messages
+            .filter(m => !user || m.user.id !== user.id)
+            .filter(m => !m.text.read).length;
+        return 0;
+    }, [messages, user])
+
+    useEffect(() => setMessages(msgs.map(m => normalize(m, 'sent'))), [msgs, setMessages]);
+
+    useEffect(() => {
+        document.title = unreads > 0 ? `Chat (${unreads})` : 'Chat';
+    }, [unreads])
 
     useEffect(() => {
         onMessage(output => {
             setMessages(prev => prev ? prev.some(m => m.text.id === output.text.id)
-                ? prev : [...prev, output]
-                : [output]
+                ? prev : [...prev, normalize(output, 'sent')]
+                : [normalize(output, 'sent')]
             )
         })
-    }, [onMessage, setMessages])
+    }, [onMessage, onRead, setMessages])
+
+    useEffect(() => {
+        onRead(output => {
+            setMessages(prev => prev
+                ? prev.map(m => m.text.id === output.text.id ? normalize(output, 'sent') : m)
+                : prev
+            )
+        })
+    }, [onRead, setMessages])
 
     const others = user ? users.filter(u => u.id !== user.id) : users;
 
