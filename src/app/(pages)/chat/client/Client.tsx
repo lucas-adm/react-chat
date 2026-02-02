@@ -4,7 +4,7 @@ import { Aside, Chat, Separator } from "./components";
 import { clsx } from "clsx";
 import { Message, normalize, User } from "@/core/models";
 import { useChat, useMessages, useUser } from "@/hooks";
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 type Props = {
     users: User[],
@@ -16,6 +16,9 @@ export const Client = ({ users, messages: msgs }: Props) => {
     const { onMessage, onRead } = useChat();
     const { user } = useUser();
     const { messages, setMessages } = useMessages();
+    const [firstUnreadId, setFirstUnreadId] = useState<string | null>(null);
+
+    useEffect(() => setMessages(msgs.map(m => normalize(m, 'sent'))), [msgs, setMessages]);
 
     const unreads: number = useMemo(() => {
         if (messages) return messages
@@ -24,11 +27,21 @@ export const Client = ({ users, messages: msgs }: Props) => {
         return 0;
     }, [messages, user])
 
-    useEffect(() => setMessages(msgs.map(m => normalize(m, 'sent'))), [msgs, setMessages]);
-
     useEffect(() => {
         document.title = unreads > 0 ? `Chat (${unreads})` : 'Chat';
     }, [unreads])
+
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            if (unreads === 0) return setFirstUnreadId(null);
+            if (firstUnreadId) return;
+            if (messages) {
+                const firstUnread = messages.find(m => !m.text.read && (user ? m.user.id !== user.id : true))
+                if (firstUnread) return setFirstUnreadId(firstUnread.text.id);
+            }
+        }, 666)
+        return () => clearTimeout(timer);
+    }, [firstUnreadId, messages, unreads, user])
 
     useEffect(() => {
         onMessage(output => {
@@ -66,7 +79,11 @@ export const Client = ({ users, messages: msgs }: Props) => {
                 <div className="w-full p-3 flex flex-col gap-3">
                     <Chat.Header />
                     <Separator />
-                    <Chat.List user={user} messages={messages} />
+                    <Chat.List
+                        user={user}
+                        messages={messages}
+                        firstUnreadId={firstUnreadId}
+                    />
                     <Chat.Footer />
                 </div>
             </section>

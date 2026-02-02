@@ -3,6 +3,7 @@ import { Message } from "@/core/models";
 export type ChatItem =
     | { type: 'message'; message: Message; }
     | { type: 'day'; date: string; }
+    | { type: 'unread'; }
 
 function getLocalDateKey(isoDate: string): string {
     const date = new Date(isoDate);
@@ -12,7 +13,7 @@ function getLocalDateKey(isoDate: string): string {
         .join('-');
 }
 
-export function groupMessagesByDay(messages: Message[]): ChatItem[] {
+export function groupMessagesByDay(messages: Message[], firstUnreadId: string | null): ChatItem[] {
     const result: ChatItem[] = [];
     let lastDay: string | null = null;
     for (const msg of messages) {
@@ -21,6 +22,7 @@ export function groupMessagesByDay(messages: Message[]): ChatItem[] {
             result.push({ type: 'day', date: dayKey });
             lastDay = dayKey;
         }
+        if (msg.text.id === firstUnreadId) result.push({ type: 'unread' });
         result.push({ type: 'message', message: msg });
     }
     return result;
