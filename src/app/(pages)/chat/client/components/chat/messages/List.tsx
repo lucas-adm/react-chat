@@ -1,22 +1,31 @@
 import { ChatItem, formatDayLabel, groupMessagesByDay } from "@/utils";
-import { Item, ScrollToBottom, Separator } from "./elements";
+import { DaysSeparator, Item, ScrollToBottom, UnreadsSeparator } from "./elements";
 import { Message, User } from "@/core/models";
 import { useLayoutEffect, useRef, useState } from "react";
 
 type Props = React.HTMLAttributes<HTMLUListElement> & {
     user: User | null;
     messages: Message[];
-    firstUnreadId: string | null;
+    firstUnreadId: string | null | undefined;
 }
 
 export const List = ({ user, messages, firstUnreadId, ...rest }: Props) => {
 
     const [isAtBottom, setIsAtBottom] = useState<boolean>(true);
     const listRef = useRef<HTMLUListElement | null>(null);
+    const unreadsRef = useRef<HTMLLIElement | null>(null);
     const bottomRef = useRef<HTMLDivElement | null>(null);
-    const isAtBottomRef = useRef(true);
+    const isAtBottomRef = useRef<boolean>(true);
 
     useLayoutEffect(() => {
+        if (firstUnreadId) {
+            const unreads = unreadsRef.current;
+            if (unreads) unreads.scrollIntoView({ behavior: "auto" });
+        }
+    }, [])
+
+    useLayoutEffect(() => {
+        if (firstUnreadId) return;
         const list = listRef.current;
         if (list) {
             const scroll = () => list.scrollTop = list.scrollHeight;
@@ -42,12 +51,13 @@ export const List = ({ user, messages, firstUnreadId, ...rest }: Props) => {
     }, [])
 
     useLayoutEffect(() => {
+        if (firstUnreadId) return;
         const bottom = bottomRef.current;
         if (isAtBottomRef.current && bottom) bottom.scrollIntoView({ behavior: "smooth" });
-    }, [messages])
+    }, [firstUnreadId, messages])
 
     const handleNavigation = () => {
-        if (bottomRef.current) return bottomRef.current.scrollIntoView({ behavior: "auto" })
+        if (bottomRef.current) return bottomRef.current.scrollIntoView({ behavior: "auto" });
         return;
     }
 
@@ -62,14 +72,14 @@ export const List = ({ user, messages, firstUnreadId, ...rest }: Props) => {
             >
                 {items.map(item => {
                     if (item.type === 'day') return (
-                        <Separator key={item.date}>
+                        <DaysSeparator key={item.date}>
                             {formatDayLabel(item.date)}
-                        </Separator>
+                        </DaysSeparator>
                     )
                     if (item.type === 'unread') return (
-                        <Separator key="unreads">
+                        <UnreadsSeparator ref={unreadsRef} key="unreads">
                             Não lidas
-                        </Separator>
+                        </UnreadsSeparator>
                     )
                     if (item.type === 'message') return (
                         <Item

@@ -16,7 +16,7 @@ export const Client = ({ users, messages: msgs }: Props) => {
     const { onMessage, onRead } = useChat();
     const { user } = useUser();
     const { messages, setMessages } = useMessages();
-    const [firstUnreadId, setFirstUnreadId] = useState<string | null>(null);
+    const [firstUnreadId, setFirstUnreadId] = useState<string | null | undefined>(undefined);
 
     useEffect(() => setMessages(msgs.map(m => normalize(m, 'sent'))), [msgs, setMessages]);
 
@@ -63,7 +63,7 @@ export const Client = ({ users, messages: msgs }: Props) => {
 
     const others = user ? users.filter(u => u.id !== user.id) : users;
 
-    if (messages) return (
+    if (messages && (firstUnreadId !== undefined)) return (
         <main className="w-screen h-screen flex items-center justify-items-center bg-neutral-100 p-2 inmd:p-0">
             <section className={clsx(
                 'overflow-hidden',
