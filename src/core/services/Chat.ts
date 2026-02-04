@@ -1,6 +1,5 @@
 import { CreateMessageInput, CreateMessageOutput } from "../dtos";
 import { createWebSocketClient } from "../ws";
-import { User } from "../models";
 
 export function createChatService() {
 
@@ -23,17 +22,17 @@ export function createChatService() {
         socket.disconnect();
     }
 
-    function onMessage(callback: (msg: CreateMessageOutput) => void) {
+    function onMessage(callback: (output: CreateMessageOutput) => void) {
         const subscribe = () => socket.subscribe<CreateMessageOutput>('/topics/msg', callback);
         if (isConnected) return subscribe();
         return pendingSubscriptions.push(subscribe);
     }
 
-    function sendMessage(user: User, input: CreateMessageInput) {
-        socket.send('/app/msg', { user, content: input.content });
+    function sendMessage(input: CreateMessageInput) {
+        socket.send('/app/msg', input);
     }
 
-    function onRead(callback: (msg: CreateMessageOutput) => void) {
+    function onRead(callback: (output: CreateMessageOutput) => void) {
         const subscribe = () => socket.subscribe<CreateMessageOutput>('/topics/read', callback);
         if (isConnected) return subscribe();
         return pendingSubscriptions.push(subscribe);

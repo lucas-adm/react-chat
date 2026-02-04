@@ -46,11 +46,13 @@ export const Client = ({ users, messages: msgs }: Props) => {
     useEffect(() => {
         onMessage(output => {
             setMessages(prev => prev ? prev.some(m => m.text.id === output.text.id)
-                ? prev : [...prev, normalize(output, 'sent')]
+                ? prev : user
+                    ? prev.map(m => m.text.clientId === output.text.clientId ? normalize(output, 'sent') : m)
+                    : [...prev, normalize(output, 'sent')]
                 : [normalize(output, 'sent')]
             )
         })
-    }, [onMessage, onRead, setMessages])
+    }, [onMessage, setMessages, user])
 
     useEffect(() => {
         onRead(output => {

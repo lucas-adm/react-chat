@@ -1,11 +1,11 @@
-import { CreateMessageInput } from "@/core/dtos";
+import { CreateMessageInput } from "@/core/schemas";
 import { useFormContext } from "react-hook-form";
 
 type Props = React.TextareaHTMLAttributes<HTMLTextAreaElement> & {
     name: keyof CreateMessageInput;
 }
 
-export const Input = ({ name, ...rest }: Props) => {
+export const Textarea = ({ name, ...rest }: Props) => {
 
     const { register } = useFormContext<CreateMessageInput>();
 

@@ -1,4 +1,7 @@
-import { createMessageData } from "@/core/schemas";
-import z from "zod";
+import { User } from "@/core/models";
 
-export type CreateMessageInput = z.infer<typeof createMessageData>;
+export type CreateMessageInput = {
+    user: User
+    clientId: string,
+    content: string
+}

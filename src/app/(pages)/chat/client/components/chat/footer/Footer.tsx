@@ -1,8 +1,10 @@
-import { Button, Input } from "./elements";
+import { Button, Textarea } from "./elements";
 import { createMessageData } from "@/core/schemas";
-import { CreateMessageInput } from "@/core/dtos";
+import { CreateMessageInput } from "@/core/schemas";
+import { CreateMessageInput as Payload } from "@/core/dtos";
 import { FormProvider, useForm } from "react-hook-form";
-import { useChat, useUser } from "@/hooks";
+import { mockMessage, normalize } from "@/core/models";
+import { useChat, useMessages, useUser } from "@/hooks";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 export const Footer = (props: React.HTMLAttributes<HTMLElement>) => {
@@ -15,11 +17,16 @@ export const Footer = (props: React.HTMLAttributes<HTMLElement>) => {
 
     const { sendMessage } = useChat();
     const { user } = useUser();
+    const { setMessages } = useMessages();
 
     const submit = (data: CreateMessageInput) => {
         if (user) {
-            sendMessage(user, data);
-            return setValue('content', '');
+            const normalized = normalize(mockMessage(user, data.content), 'sending');
+            const payload: Payload = { user, clientId: normalized.text.clientId, ...data }
+            sendMessage(payload);
+            setMessages(prev => prev ? [...prev, normalized] : [normalized]);
+            setValue('content', '');
+            return;
         }
         return null;
     }
@@ -27,8 +34,8 @@ export const Footer = (props: React.HTMLAttributes<HTMLElement>) => {
     if (user) return (
         <footer {...props}>
             <FormProvider {...createMessage}>
-                <form onSubmit={handleSubmit(submit)} className="flex gap-3">
-                    <Input name="content" />
+                <form onSubmit={handleSubmit(submit, (e => console.log(e)))} className="flex gap-3">
+                    <Textarea name="content" />
                     <Button type="submit" />
                 </form>
             </FormProvider>
