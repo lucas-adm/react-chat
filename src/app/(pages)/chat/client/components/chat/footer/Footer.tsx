@@ -3,7 +3,8 @@ import { createMessageData } from "@/core/schemas";
 import { CreateMessageInput } from "@/core/schemas";
 import { CreateMessageInput as Payload } from "@/core/dtos";
 import { FormProvider, useForm } from "react-hook-form";
-import { mockMessage, normalize } from "@/core/models";
+import { mockMessage } from "@/core/models";
+import { normalize } from "@/utils";
 import { useChat, useMessages, useUser } from "@/hooks";
 import { zodResolver } from "@hookform/resolvers/zod";
 
@@ -21,7 +22,7 @@ export const Footer = (props: React.HTMLAttributes<HTMLElement>) => {
 
     const submit = (data: CreateMessageInput) => {
         if (user) {
-            const normalized = normalize(mockMessage(user, data.content), 'sending');
+            const normalized = normalize.message(mockMessage(user, data.content), 'sending');
             const payload: Payload = { user, clientId: normalized.text.clientId, ...data }
             sendMessage(payload);
             setMessages(prev => prev ? [...prev, normalized] : [normalized]);

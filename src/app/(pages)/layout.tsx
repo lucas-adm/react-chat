@@ -1,13 +1,15 @@
-import { UserProvider, MessageProvider, WebSocketProvider } from "@/contexts";
+import { UserProvider, MessageProvider, WebSocketProvider, UsersProvider } from "@/contexts";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
     return (
-        <WebSocketProvider>
-            <UserProvider>
+        <UserProvider>
+            <UsersProvider>
                 <MessageProvider>
-                    {children}
+                    <WebSocketProvider>
+                        {children}
+                    </WebSocketProvider>
                 </MessageProvider>
-            </UserProvider>
-        </WebSocketProvider>
+            </UsersProvider>
+        </UserProvider>
     )
 }

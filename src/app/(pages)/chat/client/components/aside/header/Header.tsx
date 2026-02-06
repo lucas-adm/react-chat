@@ -13,7 +13,7 @@ export const Header = ({ user, ...rest }: Props) => {
         <>
             <header className="relative w-full p-2 rounded-xl flex items-center gap-2" {...rest}>
                 <Options />
-                <Avatar src={user.avatar} useStatus isOnline />
+                <Avatar src={user.avatar} useStatus isOnline={user.online} />
                 <Info name={user.displayName} bio={user.bio} />
             </header>
             <Separator />

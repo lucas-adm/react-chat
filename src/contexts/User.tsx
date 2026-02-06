@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useState } from 'react';
+import { createContext, useEffect, useState } from 'react';
 import { User } from '@/core/models';
 
 type UserContextProps = {
@@ -12,9 +12,15 @@ export const UserContext = createContext<UserContextProps>({} as UserContextProp
 
 export const UserProvider = ({ children }: { children: React.ReactNode }) => {
 
+    const [isMounted, setIsMounted] = useState<boolean>(false);
     const [user, setUser] = useState<User | null>(null);
 
-    return (
+    useEffect(() => {
+        function mount() { setIsMounted(true) };
+        mount();
+    }, [])
+
+    if (isMounted) return (
         <UserContext.Provider value={{
             user,
             setUser
@@ -22,5 +28,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
             {children}
         </UserContext.Provider>
     )
+
+    return null;
 
 }

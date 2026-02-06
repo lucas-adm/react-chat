@@ -1,4 +1,5 @@
 import { Client } from '@stomp/stompjs';
+import { User } from '../models';
 import SockJS from 'sockjs-client';
 
 export function createWebSocketClient(url: string) {
@@ -8,7 +9,8 @@ export function createWebSocketClient(url: string) {
         reconnectDelay: 5000
     })
 
-    function connect(onConnect: () => void) {
+    function connect(user: User | null, onConnect: () => void) {
+        client.connectHeaders = user ? { user: JSON.stringify(user) } : {};
         client.onConnect = () => onConnect();
         client.activate();
     }

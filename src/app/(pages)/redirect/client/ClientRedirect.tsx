@@ -1,5 +1,6 @@
 'use client';
 
+import { normalize } from "@/utils";
 import { useEffect } from "react";
 import { User } from "@/core/models";
 import { useRouter } from "next/navigation";
@@ -11,7 +12,7 @@ export const ClientRedirect = ({ user }: { user: User }) => {
     const router = useRouter();
 
     useEffect(() => {
-        setUser(user);
+        setUser(normalize.user(user, true));
         router.push('/chat');
     }, [router, setUser, user])
 

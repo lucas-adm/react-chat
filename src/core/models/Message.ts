@@ -32,15 +32,3 @@ export function mockMessage(user: User, content: string): Message {
         }
     }
 }
-
-export function normalize(msg: Message, status: 'sending' | 'sent'): Message {
-    return {
-        ...msg,
-        text: {
-            ...msg.text,
-            id: msg.text.id,
-            createdAt: msg.text.createdAt,
-            status: status
-        }
-    }
-}

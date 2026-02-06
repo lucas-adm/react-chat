@@ -2,7 +2,8 @@
 
 import { Aside, Chat, Separator } from "./components";
 import { clsx } from "clsx";
-import { Message, normalize, User } from "@/core/models";
+import { Message, User } from "@/core/models";
+import { normalize } from "@/utils";
 import { useChat, useMessages, useUser } from "@/hooks";
 import { useEffect, useMemo, useState } from "react";
 
@@ -18,7 +19,7 @@ export const Client = ({ users, messages: msgs }: Props) => {
     const { messages, setMessages } = useMessages();
     const [firstUnreadId, setFirstUnreadId] = useState<string | null | undefined>(undefined);
 
-    useEffect(() => setMessages(msgs.map(m => normalize(m, 'sent'))), [msgs, setMessages]);
+    useEffect(() => setMessages(msgs.map(m => normalize.message(m, 'sent'))), [msgs, setMessages]);
 
     const unreads: number = useMemo(() => {
         if (messages) return messages
@@ -46,10 +47,10 @@ export const Client = ({ users, messages: msgs }: Props) => {
     useEffect(() => {
         onMessage(output => {
             setMessages(prev => prev ? prev.some(m => m.text.id === output.text.id)
-                ? prev : user
-                    ? prev.map(m => m.text.clientId === output.text.clientId ? normalize(output, 'sent') : m)
-                    : [...prev, normalize(output, 'sent')]
-                : [normalize(output, 'sent')]
+                ? prev : user && user.id === output.user.id
+                    ? prev.map(m => m.text.clientId === output.text.clientId ? normalize.message(output, 'sent') : m)
+                    : [...prev, normalize.message(output, 'sent')]
+                : [normalize.message(output, 'sent')]
             )
         })
     }, [onMessage, setMessages, user])
@@ -57,13 +58,11 @@ export const Client = ({ users, messages: msgs }: Props) => {
     useEffect(() => {
         onRead(output => {
             setMessages(prev => prev
-                ? prev.map(m => m.text.id === output.text.id ? normalize(output, 'sent') : m)
+                ? prev.map(m => m.text.id === output.text.id ? normalize.message(output, 'sent') : m)
                 : prev
             )
         })
     }, [onRead, setMessages])
-
-    const others = user ? users.filter(u => u.id !== user.id) : users;
 
     if (messages && (firstUnreadId !== undefined)) return (
         <main className="w-screen h-screen flex items-center justify-items-center bg-neutral-100 p-2 inmd:p-0">
@@ -76,7 +75,7 @@ export const Client = ({ users, messages: msgs }: Props) => {
             )}>
                 <aside className="inmd:hidden bg-neutral-200/25 w-66 h-full border-r p-3 border-neutral-200 flex-none flex flex-col gap-3">
                     <Aside.Header user={user} />
-                    <Aside.List users={others} />
+                    <Aside.List users={users} />
                 </aside>
                 <div className="w-full p-3 flex flex-col gap-3">
                     <Chat.Header />

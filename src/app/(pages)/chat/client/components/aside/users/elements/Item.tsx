@@ -10,7 +10,7 @@ export const Item = ({ user, ...rest }: Props) => (
         className="overflow-hidden flex-none w-full p-2 rounded-xl flex items-center gap-2 bg-neutral-200"
         {...rest}
     >
-        <Avatar src={user.avatar} useStatus isOnline={false} />
+        <Avatar src={user.avatar} useStatus isOnline={user.online} />
         <div className="w-37 flex flex-col gap-1">
             <p className="truncate font-semibold text-sm text-neutral-600">{user.displayName}</p>
             <p title="Message" className="truncate text-xs text-neutral-500">{user.bio}</p>
