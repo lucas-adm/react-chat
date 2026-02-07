@@ -23,6 +23,16 @@ export function createChatService() {
         socket.disconnect();
     }
 
+    function sendSnapshotReq() {
+        socket.send('/app/snapshot', {});
+    }
+
+    function onSnapshot(callback: (output: string[]) => void) {
+        const subscribe = () => socket.subscribe<string[]>('/user/queue/snapshot', callback);
+        if (isConnected) return subscribe();
+        return pendingSubscriptions.push(subscribe);
+    }
+
     function onPresence(callback: (output: { user: User; online: boolean; }) => void) {
         const subscribe = () => socket.subscribe<{ user: User; online: boolean; }>('/topics/presence', callback);
         if (isConnected) return subscribe();
@@ -52,6 +62,8 @@ export function createChatService() {
     return {
         connect,
         disconnect,
+        sendSnapshotReq,
+        onSnapshot,
         onPresence,
         onMessage,
         sendMessage,

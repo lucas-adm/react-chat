@@ -11,14 +11,25 @@ type Props = React.HTMLAttributes<HTMLUListElement> & {
 
 export const List = ({ users: usrs, ...rest }: Props) => {
 
-    const { onPresence } = useChat();
+    const { sendSnapshotReq, onSnapshot, onPresence } = useChat();
     const { user } = useUser();
     const { users, setUsers } = useUsers();
 
     useEffect(() => {
         if (user) setUsers(usrs.filter(u => u.id !== user.id));
         else setUsers(usrs);
-    }, [setUsers, user, usrs]);
+        sendSnapshotReq();
+    }, [sendSnapshotReq, setUsers, user, usrs]);
+
+    useEffect(() => {
+        onSnapshot((output) => {
+            console.log('snapshot', output);
+            setUsers(prev => prev
+                ? prev.map(u => output.includes(u.id) ? normalize.user(u, true) : u)
+                : prev
+            )
+        })
+    }, [onSnapshot, setUsers])
 
     useEffect(() => {
         onPresence((output) => {
