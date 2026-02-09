@@ -1,7 +1,7 @@
 import { Item } from "./elements";
 import { normalize } from "@/utils";
 import { useChat, useUser } from "@/hooks";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { User } from "@/core/models";
 import { useUsers } from "@/hooks/Users";
 
@@ -15,6 +15,16 @@ export const List = ({ users: usrs, ...rest }: Props) => {
     const { user } = useUser();
     const { users, setUsers } = useUsers();
 
+    const sorted = useMemo(() => {
+        if (users) {
+            return [...users].sort((a, b) => {
+                if (a.online !== b.online) return a.online ? -1 : 1;
+                return a.displayName.localeCompare(b.displayName);
+            })
+        }
+        return null;
+    }, [users])
+
     useEffect(() => {
         if (user) setUsers(usrs.filter(u => u.id !== user.id));
         else setUsers(usrs);
@@ -23,7 +33,6 @@ export const List = ({ users: usrs, ...rest }: Props) => {
 
     useEffect(() => {
         onSnapshot((output) => {
-            console.log('snapshot', output);
             setUsers(prev => prev
                 ? prev.map(u => output.includes(u.id) ? normalize.user(u, true) : u)
                 : prev
@@ -42,9 +51,9 @@ export const List = ({ users: usrs, ...rest }: Props) => {
         })
     }, [onPresence, setUsers])
 
-    if (users) return (
+    if (sorted) return (
         <ul className="overflow-scroll scrollbar-hidden flex flex-col gap-3" {...rest}>
-            {users.map(u => <Item key={u.id} user={u} />)}
+            {sorted.map(u => <Item key={u.id} user={u} />)}
         </ul>
     )
 
