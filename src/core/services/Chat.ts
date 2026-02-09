@@ -1,6 +1,7 @@
-import { CreateMessageInput, CreateMessageOutput } from "../dtos";
-import { User } from "../models";
+import { CreateMessageInput, ReadMessageInput } from "../dtos/in";
+import { CreateMessageOutput, PresenceOutput, ReadMessageOutput, SnapshotOutput } from "../dtos/out";
 import { createWebSocketClient } from "../ws";
+import { User } from "../models";
 
 export function createChatService() {
 
@@ -23,52 +24,34 @@ export function createChatService() {
         socket.disconnect();
     }
 
-    function sendSnapshotReq() {
-        socket.send('/app/snapshot', {});
-    }
-
-    function onSnapshot(callback: (output: string[]) => void) {
-        const subscribe = () => socket.subscribe<string[]>('/user/queue/snapshot', callback);
+    function subscribeWhenConnected<T>(topic: string, callback: (output: T) => void) {
+        const subscribe = () => socket.subscribe<T>(topic, callback);
         if (isConnected) return subscribe();
         return pendingSubscriptions.push(subscribe);
     }
 
-    function onPresence(callback: (output: { user: User; online: boolean; }) => void) {
-        const subscribe = () => socket.subscribe<{ user: User; online: boolean; }>('/topics/presence', callback);
-        if (isConnected) return subscribe();
-        return pendingSubscriptions.push(subscribe);
-    }
+    const createListener = <T>(topic: string) => (callback: (output: T) => void) => subscribeWhenConnected<T>(topic, callback);
+    const createSender = <T = void>(destination: string) => (payload?: T) => socket.send(destination, payload);
 
-    function onMessage(callback: (output: CreateMessageOutput) => void) {
-        const subscribe = () => socket.subscribe<CreateMessageOutput>('/topics/msg', callback);
-        if (isConnected) return subscribe();
-        return pendingSubscriptions.push(subscribe);
-    }
+    const sendSnapshotReq = createSender<object>('/app/snapshot');
+    const sendMessage = createSender<CreateMessageInput>('/app/msg');
+    const readMessage = createSender<ReadMessageInput>('/app/read');
 
-    function sendMessage(input: CreateMessageInput) {
-        socket.send('/app/msg', input);
-    }
-
-    function onRead(callback: (output: CreateMessageOutput) => void) {
-        const subscribe = () => socket.subscribe<CreateMessageOutput>('/topics/read', callback);
-        if (isConnected) return subscribe();
-        return pendingSubscriptions.push(subscribe);
-    }
-
-    function readMessage(id: string) {
-        socket.send('/app/read', { id: id });
-    }
+    const onSnapshot = createListener<SnapshotOutput>('/user/queue/snapshot');
+    const onPresence = createListener<PresenceOutput>('/topics/presence');
+    const onMessage = createListener<CreateMessageOutput>('/topics/msg');
+    const onRead = createListener<ReadMessageOutput>('/topics/read');
 
     return {
         connect,
         disconnect,
         sendSnapshotReq,
+        sendMessage,
+        readMessage,
         onSnapshot,
         onPresence,
         onMessage,
-        sendMessage,
-        onRead,
-        readMessage
+        onRead
     }
 
 }

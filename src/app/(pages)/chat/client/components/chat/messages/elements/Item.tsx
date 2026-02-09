@@ -25,7 +25,7 @@ export const Item = ({ isAuthor, message, ...rest }: Props) => {
             const observer = new IntersectionObserver(
                 ([entry]) => {
                     if (entry.isIntersecting) {
-                        readMessage(message.text.id);
+                        readMessage({ id: message.text.id });
                         observer.disconnect();
                     }
                 },

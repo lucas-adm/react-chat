@@ -1,7 +1,7 @@
 import { Button, Textarea } from "./elements";
 import { createMessageData } from "@/core/schemas";
 import { CreateMessageInput } from "@/core/schemas";
-import { CreateMessageInput as Payload } from "@/core/dtos";
+import { CreateMessageInput as Payload } from "@/core/dtos/in";
 import { FormProvider, useForm } from "react-hook-form";
 import { mockMessage } from "@/core/models";
 import { normalize } from "@/utils";
