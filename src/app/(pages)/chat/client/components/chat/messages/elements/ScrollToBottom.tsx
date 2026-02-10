@@ -9,7 +9,7 @@ export const ScrollToBottom = ({ isAtBottom, ...rest }: Props) => (
     <button
         className={clsx(
             'select-none cursor-pointer',
-            'w-fit ml-auto -mt-3',
+            'w-fit ml-auto px-3',
             'flex items-center',
             'transition-opacity',
             isAtBottom ? 'pointer-events-none opacity-0' : 'opacity-100',
