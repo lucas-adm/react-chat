@@ -1,0 +1,63 @@
+import { Avatar } from "@/components";
+import { clsx } from "clsx";
+import { Content, DisplayName, Menu, SpeechBubble, SpeechBubbleTail, Status, Time } from "./elements";
+import { Message } from "@/core/models";
+import { useChat } from "@/hooks";
+import { useEffect, useRef } from "react";
+
+type Props = React.LiHTMLAttributes<HTMLLIElement> & {
+    message: Message;
+    isAuthor: boolean;
+}
+
+export const Item = ({ message, isAuthor, ...rest }: Props) => {
+
+    const { readMessage } = useChat();
+
+    const ref = useRef<HTMLLIElement | null>(null);
+
+    useEffect(() => {
+        if (isAuthor) return;
+        if (message.text.read) return;
+        const el = ref.current;
+        if (el) {
+            const observer = new IntersectionObserver(
+                ([entry]) => {
+                    if (entry.isIntersecting) {
+                        readMessage({ id: message.text.id });
+                        observer.disconnect();
+                    }
+                },
+                { threshold: 0.6 }
+            )
+            observer.observe(el);
+            return () => observer.disconnect();
+        }
+    }, [isAuthor, message.text.id, message.text.read, readMessage])
+
+    return (
+        <li
+            ref={ref}
+            className={clsx(
+                'overflow-hidden flex-none w-full p-2 flex items-center gap-2',
+                isAuthor ? 'justify-end' : 'justify-start'
+            )}
+            {...rest}
+        >
+            {isAuthor ? null : <Avatar src={message.user.avatar} />}
+            <SpeechBubble isAuthor={isAuthor}>
+                <SpeechBubbleTail isAuthor={isAuthor} />
+                <header className="flex items-center justify-between gap-3">
+                    <DisplayName>{message.user.displayName}</DisplayName>
+                    <Menu isAuthor={isAuthor} />
+                </header>
+                <Content>{message.text.content}</Content>
+                <footer className="flex items-center justify-between gap-1">
+                    <Time msg={message} />
+                    <Status msg={message} />
+                </footer>
+            </SpeechBubble>
+        </li>
+    )
+
+}

@@ -90,7 +90,7 @@ export const List = ({ user, messages, firstUnreadId, ...rest }: Props) => {
                     )
                     return null;
                 })}
-                <div aria-hidden ref={bottomRef} />
+                <div aria-hidden="true" ref={bottomRef} />
             </ul>
             <ScrollToBottom isAtBottom={isAtBottom} onClick={handleNavigation} />
         </>

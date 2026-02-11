@@ -1,4 +1,4 @@
 export * from './DaysSeparator';
 export * from './UnreadsSeparator';
-export * from './Item';
+export * from './item';
 export * from './ScrollToBottom';
