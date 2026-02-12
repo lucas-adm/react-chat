@@ -6,12 +6,13 @@ export type Message = {
         id: string,
         clientId: string,
         creator: string,
-        content: string,
+        content: string | null,
         createdAt: string,
         updatedAt: string | null,
         read: boolean,
         updated: boolean,
-        status: 'sending' | 'sent' | null
+        deleted: boolean,
+        status: 'sending' | 'sent' | 'deleting' | null
     }
 }
 
@@ -28,6 +29,7 @@ export function mockMessage(user: User, content: string): Message {
             updatedAt: null,
             read: false,
             updated: false,
+            deleted: false,
             status: null
         }
     }

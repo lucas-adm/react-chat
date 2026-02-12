@@ -1,5 +1,5 @@
-import { CreateMessageInput, ReadMessageInput, TypingInput } from "../dtos/in";
-import { CreateMessageOutput, PresenceOutput, ReadMessageOutput, SnapshotOutput, TypingOutput } from "../dtos/out";
+import { CreateMessageInput, DeleteMessageInput, ReadMessageInput, TypingInput } from "../dtos/in";
+import { CreateMessageOutput, DeleteMessageOutput, PresenceOutput, ReadMessageOutput, SnapshotOutput, TypingOutput } from "../dtos/out";
 import { createWebSocketClient } from "../ws";
 import { User } from "../models";
 
@@ -37,12 +37,14 @@ export function createChatService() {
     const sendTyping = createSender<TypingInput>('/app/typing');
     const sendMessage = createSender<CreateMessageInput>('/app/msg');
     const readMessage = createSender<ReadMessageInput>('/app/read');
+    const deleteMessage = createSender<DeleteMessageInput>('/app/delete')
 
     const onSnapshot = createListener<SnapshotOutput>('/user/queue/snapshot');
     const onPresence = createListener<PresenceOutput>('/topics/presence');
     const onTyping = createListener<TypingOutput>('/topics/typing');
     const onMessage = createListener<CreateMessageOutput>('/topics/msg');
     const onRead = createListener<ReadMessageOutput>('/topics/read');
+    const onDelete = createListener<DeleteMessageOutput>('/topics/delete')
 
     return {
         connect,
@@ -51,11 +53,13 @@ export function createChatService() {
         sendTyping,
         sendMessage,
         readMessage,
+        deleteMessage,
         onSnapshot,
         onPresence,
         onTyping,
         onMessage,
-        onRead
+        onRead,
+        onDelete
     }
 
 }

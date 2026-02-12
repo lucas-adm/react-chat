@@ -14,7 +14,7 @@ type Props = {
 
 export const Client = ({ users, messages: msgs }: Props) => {
 
-    const { onMessage, onRead } = useChat();
+    const { onMessage, onRead, onDelete } = useChat();
     const { user } = useUser();
     const { messages, setMessages } = useMessages();
     const [firstUnreadId, setFirstUnreadId] = useState<string | null | undefined>(undefined);
@@ -46,10 +46,14 @@ export const Client = ({ users, messages: msgs }: Props) => {
 
     useEffect(() => {
         onMessage(output => {
-            setMessages(prev => prev ? prev.some(m => m.text.id === output.text.id)
-                ? prev : user && user.id === output.user.id
-                    ? prev.map(m => m.text.clientId === output.text.clientId ? normalize.message(output, 'sent') : m)
-                    : [...prev, normalize.message(output, 'sent')]
+            setMessages(prev => prev
+                ? prev.some(m => m.text.id === output.text.id)
+                    ? prev
+                    : user && user.id === output.user.id
+                        ? prev.map(m => m.text.clientId === output.text.clientId
+                            ? normalize.message(output, 'sent')
+                            : m)
+                        : [...prev, normalize.message(output, 'sent')]
                 : [normalize.message(output, 'sent')]
             )
         })
@@ -58,11 +62,26 @@ export const Client = ({ users, messages: msgs }: Props) => {
     useEffect(() => {
         onRead(output => {
             setMessages(prev => prev
-                ? prev.map(m => m.text.id === output.text.id ? normalize.message(output, 'sent') : m)
+                ? prev.map(m => m.text.id === output.text.id
+                    ? normalize.message(output, 'sent')
+                    : m)
                 : prev
             )
         })
     }, [onRead, setMessages])
+
+    useEffect(() => {
+        onDelete((output) => {
+            setMessages(prev => prev
+                ? prev.some(m => m.text.id === output.text.id)
+                    ? prev.map(m => m.text.id === output.text.id
+                        ? normalize.message(output, 'sent')
+                        : m)
+                    : [...prev, normalize.message(output, 'sent')]
+                : [normalize.message(output, 'sent')]
+            )
+        })
+    }, [onDelete, setMessages])
 
     if (messages && (firstUnreadId !== undefined)) return (
         <main className="w-screen h-screen flex items-center justify-items-center bg-neutral-100 p-2 inmd:p-0">

@@ -49,9 +49,9 @@ export const Item = ({ message, isAuthor, ...rest }: Props) => {
                 <SpeechBubbleTail isAuthor={isAuthor} />
                 <header className="flex items-center justify-between gap-3">
                     <DisplayName>{message.user.displayName}</DisplayName>
-                    <Menu isAuthor={isAuthor} />
+                    <Menu msg={message} isAuthor={isAuthor} />
                 </header>
-                <Content>{message.text.content}</Content>
+                <Content content={message.text.content} />
                 <footer className="flex items-center justify-between gap-1">
                     <Time msg={message} />
                     <Status msg={message} />

@@ -7,12 +7,13 @@ export function user(usr: User, online: boolean): User {
     }
 }
 
-export function message(msg: Message, status: 'sending' | 'sent'): Message {
+export function message(msg: Message, status: Message['text']['status'], content?: string | null): Message {
     return {
         ...msg,
         text: {
             ...msg.text,
             id: msg.text.id,
+            content: content ?? msg.text.content,
             createdAt: msg.text.createdAt,
             status: status
         }
