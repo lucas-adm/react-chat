@@ -7,10 +7,11 @@ import { useEffect, useRef } from "react";
 
 type Props = React.LiHTMLAttributes<HTMLLIElement> & {
     message: Message;
+    setEditing: React.Dispatch<React.SetStateAction<Message | null>>;
     isAuthor: boolean;
 }
 
-export const Item = ({ message, isAuthor, ...rest }: Props) => {
+export const Item = ({ message, setEditing, isAuthor, ...rest }: Props) => {
 
     const { readMessage } = useChat();
 
@@ -49,7 +50,7 @@ export const Item = ({ message, isAuthor, ...rest }: Props) => {
                 <SpeechBubbleTail isAuthor={isAuthor} />
                 <header className="flex items-center justify-between gap-3">
                     <DisplayName>{message.user.displayName}</DisplayName>
-                    <Menu msg={message} isAuthor={isAuthor} />
+                    <Menu msg={message} setEditing={setEditing} isAuthor={isAuthor} />
                 </header>
                 <Content content={message.text.content} />
                 <footer className="flex items-center justify-between gap-1">

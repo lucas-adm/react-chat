@@ -8,9 +8,10 @@ import { useId, useRef, useState } from "react";
 type Props = {
     msg: Message;
     isAuthor: boolean;
+    setEditing: React.Dispatch<React.SetStateAction<Message | null>>;
 }
 
-export const Menu = ({ msg, isAuthor }: Props) => {
+export const Menu = ({ msg, setEditing, isAuthor }: Props) => {
 
     const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
     const triggerRef = useRef<HTMLButtonElement | null>(null);
@@ -20,6 +21,10 @@ export const Menu = ({ msg, isAuthor }: Props) => {
     const { deleteMessage } = useChat();
     const { setMessages } = useMessages();
 
+    const handleEditClick = () => {
+        setEditing(msg);
+    }
+
     const handleDeleteClick = () => {
         deleteMessage({ id: msg.text.id });
         setMessages(prev => prev
@@ -27,6 +32,8 @@ export const Menu = ({ msg, isAuthor }: Props) => {
             : prev
         )
     }
+
+    if (msg.text.deleted) return null;
 
     if (isAuthor) return (
         <div className="relative">
@@ -49,7 +56,7 @@ export const Menu = ({ msg, isAuthor }: Props) => {
                 isDropdownOpen={isDropdownOpen}
                 setIsDropdownOpen={setIsDropdownOpen}
             >
-                <MenuItem icon={IconPencil} action="Editar" />
+                <MenuItem icon={IconPencil} action="Editar" onClick={handleEditClick} />
                 <MenuItem icon={IconX} action="Apagar" onClick={handleDeleteClick} />
             </Dropdown>
         </div>

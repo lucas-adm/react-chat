@@ -11,7 +11,7 @@ export const MenuTrigger = forwardRef<HTMLButtonElement, Props>(({ isMenuOpen, s
         ref={ref}
         aria-label="Opções"
         onClick={() => setIsMenuOpen(!isMenuOpen)}
-        className="cursor-pointer relative w-fit p-0.5 rounded-full transition-colors hover:bg-neutral-100 focus:bg-neutral-100"
+        className="cursor-pointer relative w-fit p-0.5 rounded-full flex items-center transition-colors hover:bg-neutral-100 focus:bg-neutral-100"
         {...rest}
     >
         <IconDotsVertical size={18} className="text-neutral-600" />

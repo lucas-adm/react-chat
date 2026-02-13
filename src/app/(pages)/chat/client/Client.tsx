@@ -14,9 +14,10 @@ type Props = {
 
 export const Client = ({ users, messages: msgs }: Props) => {
 
-    const { onMessage, onRead, onDelete } = useChat();
+    const { onMessage, onRead, onDelete, onUpdate } = useChat();
     const { user } = useUser();
     const { messages, setMessages } = useMessages();
+    const [editing, setEditing] = useState<Message | null>(null);
     const [firstUnreadId, setFirstUnreadId] = useState<string | null | undefined>(undefined);
 
     useEffect(() => setMessages(msgs.map(m => normalize.message(m, 'sent'))), [msgs, setMessages]);
@@ -83,6 +84,19 @@ export const Client = ({ users, messages: msgs }: Props) => {
         })
     }, [onDelete, setMessages])
 
+    useEffect(() => {
+        onUpdate((output) => {
+            setMessages(prev => prev
+                ? prev.some(m => m.text.id === output.text.id)
+                    ? prev.map(m => m.text.id === output.text.id
+                        ? normalize.message(output, 'sent')
+                        : m)
+                    : [...prev, normalize.message(output, 'sent')]
+                : [normalize.message(output, 'sent')]
+            )
+        })
+    }, [onUpdate, setMessages])
+
     if (messages && (firstUnreadId !== undefined)) return (
         <main className="w-screen h-screen flex items-center justify-items-center bg-neutral-100 p-2 inmd:p-0">
             <section className={clsx(
@@ -96,12 +110,14 @@ export const Client = ({ users, messages: msgs }: Props) => {
                     <Aside.Header user={user} />
                     <Aside.List users={users} />
                 </aside>
-                <div className="w-full p-3 flex flex-col gap-3">
+                <div className="relative w-full p-3 flex flex-col gap-3">
+                    <Chat.Modal message={editing} setEditing={setEditing} />
                     <Chat.Header />
                     <Separator />
                     <Chat.List
                         user={user}
                         messages={messages}
+                        setEditing={setEditing}
                         firstUnreadId={firstUnreadId}
                     />
                     <Chat.Footer />

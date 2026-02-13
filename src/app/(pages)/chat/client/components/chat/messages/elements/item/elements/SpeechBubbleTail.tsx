@@ -1,6 +1,6 @@
 import { clsx } from "clsx";
 
-type Props = {
+type Props = React.HTMLAttributes<HTMLDivElement> & {
     isAuthor: boolean;
 }
 

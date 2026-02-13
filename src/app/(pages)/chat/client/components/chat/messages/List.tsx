@@ -6,10 +6,11 @@ import { useLayoutEffect, useRef, useState } from "react";
 type Props = React.HTMLAttributes<HTMLUListElement> & {
     user: User | null;
     messages: Message[];
+    setEditing: React.Dispatch<React.SetStateAction<Message | null>>;
     firstUnreadId: string | null | undefined;
 }
 
-export const List = ({ user, messages, firstUnreadId, ...rest }: Props) => {
+export const List = ({ user, messages, setEditing, firstUnreadId, ...rest }: Props) => {
 
     const [isAtBottom, setIsAtBottom] = useState<boolean>(true);
     const listRef = useRef<HTMLUListElement | null>(null);
@@ -84,6 +85,7 @@ export const List = ({ user, messages, firstUnreadId, ...rest }: Props) => {
                     if (item.type === 'message') return (
                         <Item
                             key={item.message.text.id}
+                            setEditing={setEditing}
                             isAuthor={user ? user.id === item.message.user.id : false}
                             message={item.message}
                         />
