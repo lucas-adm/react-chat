@@ -1,18 +1,20 @@
 import { clsx } from "clsx";
 import { IconChevronDown } from "@tabler/icons-react";
+import { Message } from "@/core/models";
 
 type Props = React.ButtonHTMLAttributes<HTMLButtonElement> & {
     isAtBottom: boolean;
+    editing: Message | null;
 }
 
-export const ScrollToBottom = ({ isAtBottom, ...rest }: Props) => (
+export const ScrollToBottom = ({ isAtBottom, editing, ...rest }: Props) => (
     <button
         className={clsx(
             'select-none cursor-pointer',
             'w-fit ml-auto px-3',
             'flex items-center',
             'transition-opacity',
-            isAtBottom ? 'pointer-events-none opacity-0' : 'opacity-100',
+            editing || isAtBottom ? 'pointer-events-none opacity-0' : 'opacity-100',
         )}
         {...rest}
     >

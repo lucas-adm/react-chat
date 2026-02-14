@@ -5,7 +5,7 @@ type Props = Omit<React.HTMLAttributes<HTMLParagraphElement>, 'content'> & {
 export const Content = ({ content, ...rest }: Props) => {
 
     if (content) return (
-        <p className="text-xs text-neutral-500" {...rest}>{content}</p>
+        <p className="break-all text-xs text-neutral-500" {...rest}>{content}</p>
     )
 
     return (

@@ -1,16 +1,17 @@
-import { ChangeEvent } from "react";
-import { CreateMessageInput } from "@/core/schemas";
+import { ChangeEvent, useEffect } from "react";
+import { CreateMessageInput, UpdateMessageInput } from "@/core/schemas";
+import { Message, User } from "@/core/models";
 import { useChat } from "@/hooks";
 import { useFormContext } from "react-hook-form";
-import { User } from "@/core/models";
 
 type Props = React.TextareaHTMLAttributes<HTMLTextAreaElement> & {
-    name: keyof CreateMessageInput;
+    name: keyof (CreateMessageInput | UpdateMessageInput);
     ref: React.RefObject<boolean>;
     user: User;
+    editing: Message | null;
 }
 
-export const Textarea = ({ name, ref, user, ...rest }: Props) => {
+export const Textarea = ({ name, ref, user, editing, ...rest }: Props) => {
 
     const { register } = useFormContext<CreateMessageInput>();
     const { onChange, ...registerRest } = register(name);
@@ -31,8 +32,15 @@ export const Textarea = ({ name, ref, user, ...rest }: Props) => {
 
     const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
         onChange(e);
-        handleTyping(e.target.value);
+        if (!editing) handleTyping(e.target.value);
     }
+
+    useEffect(() => {
+        if (editing) {
+            sendTyping({ user, typing: false });
+            ref.current = false;
+        }
+    }, [editing, ref, sendTyping, user])
 
     return (
         <textarea

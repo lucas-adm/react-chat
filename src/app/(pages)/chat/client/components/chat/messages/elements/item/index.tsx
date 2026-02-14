@@ -7,11 +7,12 @@ import { useEffect, useRef } from "react";
 
 type Props = React.LiHTMLAttributes<HTMLLIElement> & {
     message: Message;
+    editing: Message | null;
     setEditing: React.Dispatch<React.SetStateAction<Message | null>>;
     isAuthor: boolean;
 }
 
-export const Item = ({ message, setEditing, isAuthor, ...rest }: Props) => {
+export const Item = ({ message, editing, setEditing, isAuthor, ...rest }: Props) => {
 
     const { readMessage } = useChat();
 
@@ -41,6 +42,7 @@ export const Item = ({ message, setEditing, isAuthor, ...rest }: Props) => {
             ref={ref}
             className={clsx(
                 'overflow-hidden flex-none w-full p-2 flex items-center gap-2',
+                editing && editing.text.id === message.text.id ? 'z-1' : 'z-0 transition-all duration-999',
                 isAuthor ? 'justify-end' : 'justify-start'
             )}
             {...rest}

@@ -97,6 +97,14 @@ export const Client = ({ users, messages: msgs }: Props) => {
         })
     }, [onUpdate, setMessages])
 
+    useEffect(() => {
+        const cancelEditing = (e: KeyboardEvent) => {
+            if (editing) if (e.key === 'Escape') setEditing(null);
+        }
+        window.addEventListener('keydown', cancelEditing);
+        return () => window.removeEventListener('keydown', cancelEditing);
+    }, [editing])
+
     if (messages && (firstUnreadId !== undefined)) return (
         <main className="w-screen h-screen flex items-center justify-items-center bg-neutral-100 p-2 inmd:p-0">
             <section className={clsx(
@@ -110,17 +118,17 @@ export const Client = ({ users, messages: msgs }: Props) => {
                     <Aside.Header user={user} />
                     <Aside.List users={users} />
                 </aside>
-                <div className="relative w-full p-3 flex flex-col gap-3">
-                    <Chat.Modal message={editing} setEditing={setEditing} />
+                <div className="w-full p-3 flex flex-col gap-3">
                     <Chat.Header />
                     <Separator />
                     <Chat.List
                         user={user}
                         messages={messages}
+                        editing={editing}
                         setEditing={setEditing}
                         firstUnreadId={firstUnreadId}
                     />
-                    <Chat.Footer />
+                    <Chat.Footer editing={editing} setEditing={setEditing} />
                 </div>
             </section>
         </main>

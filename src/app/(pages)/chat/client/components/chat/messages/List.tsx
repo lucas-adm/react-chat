@@ -1,16 +1,18 @@
 import { ChatItem, formatDayLabel, groupMessagesByDay } from "@/utils";
-import { DaysSeparator, Item, ScrollToBottom, UnreadsSeparator } from "./elements";
+import { clsx } from "clsx";
+import { DaysSeparator, EditionBlur, Item, ScrollToBottom, UnreadsSeparator } from "./elements";
 import { Message, User } from "@/core/models";
 import { useLayoutEffect, useRef, useState } from "react";
 
 type Props = React.HTMLAttributes<HTMLUListElement> & {
     user: User | null;
     messages: Message[];
+    editing: Message | null;
     setEditing: React.Dispatch<React.SetStateAction<Message | null>>;
     firstUnreadId: string | null | undefined;
 }
 
-export const List = ({ user, messages, setEditing, firstUnreadId, ...rest }: Props) => {
+export const List = ({ user, messages, editing, setEditing, firstUnreadId, ...rest }: Props) => {
 
     const [isAtBottom, setIsAtBottom] = useState<boolean>(true);
     const listRef = useRef<HTMLUListElement | null>(null);
@@ -41,7 +43,7 @@ export const List = ({ user, messages, setEditing, firstUnreadId, ...rest }: Pro
         const list = listRef.current;
         if (list) {
             const onScroll = () => {
-                const threshold = 10;
+                const threshold = 333;
                 const isAtBottom = list.scrollTop + list.clientHeight >= list.scrollHeight - threshold;
                 isAtBottomRef.current = isAtBottom;
                 setIsAtBottom(isAtBottom);
@@ -68,7 +70,11 @@ export const List = ({ user, messages, setEditing, firstUnreadId, ...rest }: Pro
         <>
             <ul
                 ref={listRef}
-                className="overflow-y-scroll scrollbar-hidden flex-1 flex flex-col gap-3"
+                className={clsx(
+                    'scrollbar-hidden',
+                    'relative flex-1 flex flex-col gap-3',
+                    editing ? 'overflow-y-hidden' : 'overflow-y-scroll'
+                )}
                 {...rest}
             >
                 {items.map(item => {
@@ -85,6 +91,7 @@ export const List = ({ user, messages, setEditing, firstUnreadId, ...rest }: Pro
                     if (item.type === 'message') return (
                         <Item
                             key={item.message.text.id}
+                            editing={editing}
                             setEditing={setEditing}
                             isAuthor={user ? user.id === item.message.user.id : false}
                             message={item.message}
@@ -92,9 +99,14 @@ export const List = ({ user, messages, setEditing, firstUnreadId, ...rest }: Pro
                     )
                     return null;
                 })}
+                <EditionBlur aria-hidden="true" editing={editing} />
                 <div aria-hidden="true" ref={bottomRef} />
             </ul>
-            <ScrollToBottom isAtBottom={isAtBottom} onClick={handleNavigation} />
+            <ScrollToBottom
+                isAtBottom={isAtBottom}
+                editing={editing}
+                onClick={handleNavigation}
+            />
         </>
     )
 

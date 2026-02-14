@@ -1,24 +1,30 @@
 import { Button, Textarea, Typing } from "./elements";
-import { createMessageData } from "@/core/schemas";
+import { createMessageData, UpdateMessageInput } from "@/core/schemas";
 import { CreateMessageInput } from "@/core/schemas";
-import { CreateMessageInput as Payload } from "@/core/dtos/in";
+import { CreateMessageInput as CreationPayload, UpdateMessageInput as EditionPayload } from "@/core/dtos/in";
 import { FormProvider, useForm } from "react-hook-form";
-import { mockMessage } from "@/core/models";
+import { IconArrowRight, IconCheck, IconX } from "@tabler/icons-react";
+import { Message, mockMessage, User } from "@/core/models";
 import { normalize } from "@/utils";
 import { useChat, useMessages, useTyping, useUser } from "@/hooks";
 import { useEffect, useMemo, useRef } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-export const Footer = (props: React.HTMLAttributes<HTMLElement>) => {
+type Props = React.HTMLAttributes<HTMLElement> & {
+    editing: Message | null;
+    setEditing: React.Dispatch<React.SetStateAction<Message | null>>;
+}
 
-    const createMessage = useForm<CreateMessageInput>({
+export const Footer = ({ editing, setEditing, ...rest }: Props) => {
+
+    const createMessage = useForm<CreateMessageInput | UpdateMessageInput>({
         resolver: zodResolver(createMessageData)
     })
 
-    const { trigger, getValues, setValue } = createMessage;
+    const { trigger, getValues, reset } = createMessage;
 
     const { user } = useUser();
-    const { sendTyping, onTyping, sendMessage } = useChat();
+    const { sendTyping, onTyping, sendMessage, updateMessage } = useChat();
     const { typing, setTyping } = useTyping();
     const { setMessages } = useMessages();
 
@@ -43,25 +49,53 @@ export const Footer = (props: React.HTMLAttributes<HTMLElement>) => {
         })
     }, [onTyping, setTyping])
 
+    useEffect(() => {
+        if (editing) reset({ content: editing.text.content ?? '' });
+        else reset({ content: '' });
+    }, [editing, reset])
+
+    const sendCreateMessage = (user: User, data: CreateMessageInput) => {
+        const normalized = normalize.message(mockMessage(user, data.content), 'sending');
+        const payload: CreationPayload = { user, clientId: normalized.text.clientId, ...data };
+        sendTyping({ user, typing: false });
+        sendMessage(payload);
+        setMessages(prev => prev ? [...prev, normalized] : [normalized]);
+        reset({ content: '' });
+        isTypingRef.current = false;
+        return;
+    }
+
+    const sendUpdateMessage = (user: User, editing: Message, data: UpdateMessageInput) => {
+        const normalized = normalize.message(editing, 'sending', data.content);
+        const payload: EditionPayload = { id: editing.text.id, ...data };
+        sendTyping({ user, typing: false });
+        updateMessage(payload);
+        setMessages(prev => prev
+            ? prev.some(m => m.text.id === editing.text.id)
+                ? prev.map(m => m.text.id === editing.text.id
+                    ? normalized
+                    : m)
+                : [...prev, normalized]
+            : [normalized]
+        )
+        setEditing(null);
+        reset({ content: '' });
+        return;
+    }
+
     const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         const isValid = await trigger();
         if (user && isValid) {
             const data = getValues();
-            const normalized = normalize.message(mockMessage(user, data.content), 'sending');
-            const payload: Payload = { user, clientId: normalized.text.clientId, ...data }
-            sendTyping({ user, typing: false });
-            sendMessage(payload);
-            setMessages(prev => prev ? [...prev, normalized] : [normalized]);
-            setValue('content', '')
-            isTypingRef.current = false;
-            return;
+            if (editing) sendUpdateMessage(user, editing, data);
+            else sendCreateMessage(user, data);
         }
         return null;
     }
 
     return (
-        <footer className="relative" {...props}>
+        <footer className="relative" {...rest}>
             <Typing typing={typingUsers} />
             {user
                 ? <FormProvider {...createMessage}>
@@ -69,8 +103,21 @@ export const Footer = (props: React.HTMLAttributes<HTMLElement>) => {
                         onSubmit={handleFormSubmit}
                         className="flex gap-3"
                     >
-                        <Textarea name="content" ref={isTypingRef} user={user} />
-                        <Button type="submit" />
+                        <Textarea
+                            name="content"
+                            ref={isTypingRef}
+                            user={user}
+                            editing={editing}
+                        />
+                        {editing
+                            ?
+                            <>
+                                <Button type="button" icon={IconX} onClick={() => setEditing(null)} />
+                                <Button type="submit" icon={IconCheck} />
+                            </>
+                            :
+                            <Button type="submit" icon={IconArrowRight} />
+                        }
                     </form>
                 </FormProvider>
                 : null
