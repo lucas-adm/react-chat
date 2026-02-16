@@ -13,7 +13,7 @@ type Props = React.TextareaHTMLAttributes<HTMLTextAreaElement> & {
 
 export const Textarea = ({ name, ref, user, editing, ...rest }: Props) => {
 
-    const { register } = useFormContext<CreateMessageInput>();
+    const { register } = useFormContext<CreateMessageInput | UpdateMessageInput>();
     const { onChange, ...registerRest } = register(name);
 
     const { sendTyping } = useChat();
@@ -48,7 +48,7 @@ export const Textarea = ({ name, ref, user, editing, ...rest }: Props) => {
             onChange={handleChange}
             placeholder="Escreva sua mensagem"
             rows={1}
-            className="resize-none outline-none w-full px-4 py-2 rounded-full border border-neutral-200 text-sm"
+            className="resize-none outline-none z-2 w-full px-4 py-2 rounded-full border border-neutral-200 text-sm"
             {...rest}
         />
     )

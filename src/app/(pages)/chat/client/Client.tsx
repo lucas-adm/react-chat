@@ -109,15 +109,12 @@ export const Client = ({ users, messages: msgs }: Props) => {
         <main className="w-screen h-screen flex items-center justify-items-center bg-neutral-100 p-2 inmd:p-0">
             <section className={clsx(
                 'overflow-hidden',
-                'w-full max-w-222 h-full max-h-166.5 inmd:max-h-full',
+                'relative w-full max-w-222 h-full max-h-166.5 inmd:max-h-full',
                 'mx-auto rounded-2xl inmd:rounded-none border border-neutral-200',
                 'flex',
                 'bg-neutral-100'
             )}>
-                <aside className="inmd:hidden bg-neutral-200/25 w-66 h-full border-r p-3 border-neutral-200 flex-none flex flex-col gap-3">
-                    <Aside.Header user={user} />
-                    <Aside.List users={users} />
-                </aside>
+                <Aside user={user} users={users} />
                 <div className="w-full p-3 flex flex-col gap-3">
                     <Chat.Header />
                     <Separator />
@@ -133,5 +130,7 @@ export const Client = ({ users, messages: msgs }: Props) => {
             </section>
         </main>
     )
+
+    return null;
 
 }
