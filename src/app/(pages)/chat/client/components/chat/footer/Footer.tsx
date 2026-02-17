@@ -3,7 +3,7 @@ import { createMessageData, UpdateMessageInput } from "@/core/schemas";
 import { CreateMessageInput } from "@/core/schemas";
 import { CreateMessageInput as CreationPayload, UpdateMessageInput as EditionPayload } from "@/core/dtos/in";
 import { FormProvider, useForm } from "react-hook-form";
-import { IconArrowRight, IconCheck, IconX } from "@tabler/icons-react";
+import { IconArrowRight, IconCheck, IconPaperclip, IconSticker2, IconX } from "@tabler/icons-react";
 import { Message, mockMessage, User } from "@/core/models";
 import { normalize } from "@/utils";
 import { useChat, useMessages, useTyping, useUser } from "@/hooks";
@@ -21,7 +21,7 @@ export const Footer = ({ editing, setEditing, ...rest }: Props) => {
         resolver: zodResolver(createMessageData)
     })
 
-    const { trigger, getValues, reset } = createMessage;
+    const { trigger, getValues, reset, setFocus } = createMessage;
 
     const { user } = useUser();
     const { sendTyping, onTyping, sendMessage, updateMessage } = useChat();
@@ -61,6 +61,7 @@ export const Footer = ({ editing, setEditing, ...rest }: Props) => {
         sendMessage(payload);
         setMessages(prev => prev ? [...prev, normalized] : [normalized]);
         reset({ content: '' });
+        requestAnimationFrame(() => setFocus('content'));
         isTypingRef.current = false;
         return;
     }
@@ -103,12 +104,16 @@ export const Footer = ({ editing, setEditing, ...rest }: Props) => {
                         onSubmit={handleFormSubmit}
                         className="flex gap-3"
                     >
-                        <Textarea
-                            name="content"
-                            ref={isTypingRef}
-                            user={user}
-                            editing={editing}
-                        />
+                        <fieldset className='w-full p-2 rounded-3xl border border-neutral-200 flex items-center gap-2'>
+                            <Button type="button" icon={IconSticker2} className='mb-0! py-0 text-neutral-400! bg-transparent' />
+                            <Textarea
+                                name="content"
+                                isTypingRef={isTypingRef}
+                                user={user}
+                                editing={editing}
+                            />
+                            <Button type="button" icon={IconPaperclip} className='mb-0! py-0 text-neutral-400! bg-transparent' />
+                        </fieldset>
                         {editing
                             ?
                             <>

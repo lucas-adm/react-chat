@@ -21,6 +21,11 @@
   }
 }
 
+@utility scrollbar-custom {
+  scrollbar-color: oklch(87% 0 0) transparent;
+  scrollbar-width: thin;
+}
+
 body {
   @apply font-mono;
 }

@@ -1,13 +1,24 @@
+import { clsx } from 'clsx';
+
 type Props = React.ButtonHTMLAttributes<HTMLButtonElement> & {
     icon: React.ElementType;
 }
 
-export const Button = ({ icon: Icon, ...rest }: Props) => (
+export const Button = ({ icon: Icon, className, ...rest }: Props) => (
     <button
-        className="cursor-pointer px-2 p-1 rounded-full flex items-center justify-center bg-indigo-600 transition-colors hover:grayscale-15"
+        className={clsx(
+            'cursor-pointer',
+            'mb-0.5 p-1.75 rounded-full',
+            'self-end flex items-center justify-center',
+            'text-white',
+            'bg-indigo-600',
+            'transition-colors',
+            'hover:grayscale-15',
+            className
+        )}
         {...rest}
     >
-        <figure className="text-white">
+        <figure>
             <Icon size={22} />
         </figure>
     </button>
