@@ -25,19 +25,24 @@ export const List = ({ user, messages, editing, setEditing, firstUnreadId, ...re
             const unreads = unreadsRef.current;
             if (unreads) unreads.scrollIntoView({ behavior: "auto" });
         }
-    }, [])
+    }, [firstUnreadId])
 
     useLayoutEffect(() => {
         if (firstUnreadId) return;
         const list = listRef.current;
         if (list) {
+            let hasResized: boolean = false;
             const scroll = () => list.scrollTop = list.scrollHeight;
             scroll();
-            const observer = new ResizeObserver(scroll);
+            const observer = new ResizeObserver(() => {
+                if (hasResized) return observer.disconnect();
+                scroll();
+                hasResized = true;
+            });
             observer.observe(list);
             return () => observer.disconnect();
         }
-    }, [])
+    }, [firstUnreadId])
 
     useLayoutEffect(() => {
         const list = listRef.current;
