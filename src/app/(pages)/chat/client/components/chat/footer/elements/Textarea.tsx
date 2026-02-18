@@ -1,7 +1,7 @@
 import { CreateMessageInput, UpdateMessageInput } from '@/core/schemas';
+import { forwardRef, useEffect, useRef } from 'react';
 import { Message, User } from '@/core/models';
 import { useChat } from '@/hooks';
-import { useEffect, useRef } from 'react';
 import { useFormContext } from 'react-hook-form';
 
 type Props = React.TextareaHTMLAttributes<HTMLTextAreaElement> & {
@@ -11,9 +11,9 @@ type Props = React.TextareaHTMLAttributes<HTMLTextAreaElement> & {
     editing: Message | null;
 }
 
-export const Textarea = ({ name, isTypingRef, user, editing, ...rest }: Props) => {
+export const Textarea = forwardRef<HTMLTextAreaElement, Props>(({ name, isTypingRef, user, editing, ...rest }, forwardedRef) => {
 
-    const ref = useRef<HTMLTextAreaElement | null>(null);
+    const localRef = useRef<HTMLTextAreaElement | null>(null);
     const { register } = useFormContext<CreateMessageInput | UpdateMessageInput>();
     const { onChange, ref: registerRef, ...registerRest } = register(name);
 
@@ -56,20 +56,19 @@ export const Textarea = ({ name, isTypingRef, user, editing, ...rest }: Props) =
     }
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-        const textarea = ref.current;
+        const textarea = localRef.current;
         if (textarea) {
             if (e.shiftKey && e.key === 'Enter') return;
             if (e.key === 'Enter') {
                 e.preventDefault();
                 e.currentTarget.form?.requestSubmit();
-                textarea.style.height = 'auto';
             }
         }
         return;
     }
 
     useEffect(() => {
-        const textarea = ref.current;
+        const textarea = localRef.current;
         if (textarea) {
             textarea.focus();
             if (editing) {
@@ -92,7 +91,8 @@ export const Textarea = ({ name, isTypingRef, user, editing, ...rest }: Props) =
             {...registerRest}
             ref={(el) => {
                 registerRef(el);
-                ref.current = el;
+                localRef.current = el;
+                if (forwardedRef && 'current' in forwardedRef) forwardedRef.current = el;
             }}
             autoFocus
             onChange={handleChange}
@@ -105,4 +105,6 @@ export const Textarea = ({ name, isTypingRef, user, editing, ...rest }: Props) =
         />
     )
 
-}
+})
+
+Textarea.displayName = 'MessageInput';

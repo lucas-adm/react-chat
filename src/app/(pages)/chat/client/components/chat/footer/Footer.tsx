@@ -28,6 +28,7 @@ export const Footer = ({ editing, setEditing, ...rest }: Props) => {
     const { typing, setTyping } = useTyping();
     const { setMessages } = useMessages();
 
+    const textareaRef = useRef<HTMLTextAreaElement | null>(null);
     const isTypingRef = useRef<boolean>(false);
 
     const typingUsers: string[] | null = useMemo(() => {
@@ -63,6 +64,7 @@ export const Footer = ({ editing, setEditing, ...rest }: Props) => {
         reset({ content: '' });
         requestAnimationFrame(() => setFocus('content'));
         isTypingRef.current = false;
+        if (textareaRef.current) textareaRef.current.style.height = 'auto';
         return;
     }
 
@@ -81,6 +83,7 @@ export const Footer = ({ editing, setEditing, ...rest }: Props) => {
         )
         setEditing(null);
         reset({ content: '' });
+        if (textareaRef.current) textareaRef.current.style.height = 'auto';
         return;
     }
 
@@ -107,6 +110,7 @@ export const Footer = ({ editing, setEditing, ...rest }: Props) => {
                         <fieldset className='w-full p-2 rounded-3xl border border-neutral-200 flex items-center gap-2'>
                             <Button type="button" icon={IconSticker2} className='mb-0! py-0 text-neutral-400! bg-transparent' />
                             <Textarea
+                                ref={textareaRef}
                                 name="content"
                                 isTypingRef={isTypingRef}
                                 user={user}
