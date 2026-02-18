@@ -1,3 +1,5 @@
+import Linkify from 'linkify-react';
+
 type Props = Omit<React.HTMLAttributes<HTMLParagraphElement>, 'content'> & {
     content: string | null;
 }
@@ -5,7 +7,20 @@ type Props = Omit<React.HTMLAttributes<HTMLParagraphElement>, 'content'> & {
 export const Content = ({ content, ...rest }: Props) => {
 
     if (content) return (
-        <p className="break-all text-xs text-neutral-500" {...rest}>{content}</p>
+        <p
+            className="break-all whitespace-pre-line text-xs text-neutral-500"
+            {...rest}
+        >
+            <Linkify
+                options={{
+                    target: '_blank',
+                    rel: 'noopener noreferrer',
+                    className: 'underline text-indigo-600'
+                }}
+            >
+                {content}
+            </Linkify>
+        </p>
     )
 
     return (
