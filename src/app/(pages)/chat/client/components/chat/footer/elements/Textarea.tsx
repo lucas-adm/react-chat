@@ -1,3 +1,4 @@
+import { clsx } from 'clsx';
 import { CreateMessageInput, UpdateMessageInput } from '@/core/schemas';
 import { forwardRef, useEffect, useRef } from 'react';
 import { Message, User } from '@/core/models';
@@ -95,12 +96,21 @@ export const Textarea = forwardRef<HTMLTextAreaElement, Props>(({ name, isTyping
                 if (forwardedRef && 'current' in forwardedRef) forwardedRef.current = el;
             }}
             autoFocus
+            autoCorrect='off'
+            autoComplete='off'
             onChange={handleChange}
             onInput={handleInput}
             onKeyDown={handleKeyDown}
             placeholder={editing ? 'Edite sua mensagem' : 'Escreva sua mensagem'}
             rows={1}
-            className='scrollbar-custom resize-none outline-none w-full text-sm'
+            className={clsx(
+                'scrollbar-custom',
+                'resize-none outline-none',
+                'w-full',
+                'text-sm text-indigo-200',
+                'placeholder:truncate placeholder-indigo-200',
+                'selection:bg-indigo-600 selection:text-indigo-100'
+            )}
             {...rest}
         />
     )

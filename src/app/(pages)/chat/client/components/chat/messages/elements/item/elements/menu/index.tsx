@@ -33,6 +33,10 @@ export const Menu = ({ msg, setEditing, isAuthor }: Props) => {
         )
     }
 
+    const handleKeyDown = (f: () => void) => (e: React.KeyboardEvent<HTMLButtonElement>) => {
+        if (e.key === 'Enter' || e.key === ' ') f();
+    }
+
     if (msg.text.deleted) return null;
 
     if (isAuthor) return (
@@ -52,12 +56,23 @@ export const Menu = ({ msg, setEditing, isAuthor }: Props) => {
                 aria-labelledby={menuTriggerId}
                 aria-orientation="vertical"
                 aria-hidden={!isDropdownOpen}
+                inert={!isDropdownOpen}
                 triggerRef={triggerRef}
                 isDropdownOpen={isDropdownOpen}
                 setIsDropdownOpen={setIsDropdownOpen}
             >
-                <MenuItem icon={IconPencil} action="Editar" onClick={handleEditClick} />
-                <MenuItem icon={IconX} action="Apagar" onClick={handleDeleteClick} />
+                <MenuItem
+                    onClick={handleEditClick}
+                    onKeyDown={handleKeyDown(handleEditClick)}
+                    icon={IconPencil}
+                    action="Editar"
+                />
+                <MenuItem
+                    onClick={handleDeleteClick}
+                    onKeyDown={handleKeyDown(handleDeleteClick)}
+                    icon={IconX}
+                    action="Apagar"
+                />
             </Dropdown>
         </div>
     )

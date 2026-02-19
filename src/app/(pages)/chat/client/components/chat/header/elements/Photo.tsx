@@ -5,12 +5,15 @@ type Props = ImageProps & {
 }
 
 export const Photo = ({ alt, size, ...rest }: Props) => (
-    <figure className="select-none relative flex-none">
+    <figure
+        style={{ width: size, height: size }}
+        className="overflow-hidden select-none pointer-events-none relative rounded-full flex-none"
+    >
         <Image
             alt={alt}
             width={size}
-            height={0}
-            className="pointer-events-none rounded-full"
+            height={size}
+            className="w-full h-full object-cover object-center"
             {...rest}
         />
     </figure>

@@ -9,10 +9,11 @@ export const MenuItem = ({ icon: Icon, action, ...rest }: Props) => (
     <button
         type="button"
         className={clsx(
-            'cursor-pointer',
+            'cursor-pointer outline-none',
             'p-2',
             'flex items-center justify-center gap-2',
-            'hover:bg-neutral-200'
+            'text-indigo-100',
+            'hover:bg-black/10 focus-visible:bg-black/10'
         )}
         {...rest}
     >

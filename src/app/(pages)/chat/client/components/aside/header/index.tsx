@@ -12,7 +12,7 @@ export const Header = ({ user, ...rest }: Props) => {
     if (user) return (
         <>
             <header className="relative w-full p-2 rounded-xl flex items-center gap-2" {...rest}>
-                <Options />
+                <Options hidden />
                 <Avatar src={user.avatar} useStatus isOnline={user.online} />
                 <Info name={user.displayName} bio={user.bio} />
             </header>

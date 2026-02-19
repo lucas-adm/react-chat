@@ -12,13 +12,13 @@ export const Status = ({ msg, ...rest }: Props) => {
 
     if (msg.text.status === 'sending') return (
         <span {...rest}>
-            <figure className="text-neutral-400"><IconCircleDotted size={18} /></figure>
+            <figure className="text-indigo-700"><IconCircleDotted size={18} /></figure>
         </span>
     )
 
     if (msg.text.status === 'sent') return (
         <span {...rest}>
-            <figure className={clsx(msg.text.read ? 'text-sky-600' : 'text-neutral-400')}>
+            <figure className={clsx(msg.text.read ? 'text-indigo-400' : 'text-indigo-700')}>
                 <IconCheck size={18} />
             </figure>
         </span>
@@ -26,7 +26,7 @@ export const Status = ({ msg, ...rest }: Props) => {
 
     if (msg.text.status === 'deleting') return (
         <span {...rest}>
-            <figure className="text-neutral-400"><IconEraser size={18} /></figure>
+            <figure className="text-indigo-700"><IconEraser size={18} /></figure>
         </span>
     )
 

@@ -11,7 +11,7 @@ export const Typing = ({ typing, ...rest }: Props) => {
             className={clsx(
                 'select-none pointer-events-none',
                 'absolute -top-6 left-4',
-                'text-xs text-neutral-400',
+                'text-xs text-indigo-300',
                 'flex-1',
                 'transition-opacity ease-linear',
                 typing.length > 0 ? 'opacity-100' : 'opacity-0',

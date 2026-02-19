@@ -99,7 +99,7 @@ export const Footer = ({ editing, setEditing, ...rest }: Props) => {
     }
 
     return (
-        <footer className="relative" {...rest}>
+        <footer className="z-2 relative" {...rest}>
             <Typing typing={typingUsers} />
             {user
                 ? <FormProvider {...createMessage}>
@@ -107,8 +107,8 @@ export const Footer = ({ editing, setEditing, ...rest }: Props) => {
                         onSubmit={handleFormSubmit}
                         className="flex gap-3"
                     >
-                        <fieldset className='w-full p-2 rounded-3xl border border-neutral-200 flex items-center gap-2'>
-                            <Button type="button" icon={IconSticker2} className='mb-0! py-0 text-neutral-400! bg-transparent' />
+                        <fieldset className='w-full p-2 rounded-3xl border border-white/5 flex items-center gap-2 bg-indigo-800 drop-shadow'>
+                            <Button type="button" tabIndex={-1} icon={IconSticker2} className='mb-0! py-0 text-indigo-500! bg-transparent' />
                             <Textarea
                                 ref={textareaRef}
                                 name="content"
@@ -116,7 +116,7 @@ export const Footer = ({ editing, setEditing, ...rest }: Props) => {
                                 user={user}
                                 editing={editing}
                             />
-                            <Button type="button" icon={IconPaperclip} className='mb-0! py-0 text-neutral-400! bg-transparent' />
+                            <Button type="button" tabIndex={-1} icon={IconPaperclip} className='mb-0! py-0 text-indigo-500! bg-transparent' />
                         </fieldset>
                         {editing
                             ?

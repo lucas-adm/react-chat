@@ -8,7 +8,7 @@ export const Content = ({ content, ...rest }: Props) => {
 
     if (content) return (
         <p
-            className="break-all whitespace-pre-line text-xs text-neutral-500"
+            className="break-all whitespace-pre-line text-xs text-indigo-200"
             {...rest}
         >
             <Linkify
@@ -24,7 +24,7 @@ export const Content = ({ content, ...rest }: Props) => {
     )
 
     return (
-        <p className="italic font-medium text-xs text-neutral-400" {...rest}>Apagada</p>
+        <p className="italic font-medium text-xs text-indigo-200" {...rest}>Apagada</p>
     )
 
 }

@@ -1,6 +1,6 @@
 import { ChatItem, formatDayLabel, groupMessagesByDay } from "@/utils";
 import { clsx } from "clsx";
-import { DaysSeparator, EditionBlur, Item, ScrollToBottom, UnreadsSeparator } from "./elements";
+import { DaysSeparator, Item, ScrollToBottom, UnreadsSeparator } from "./elements";
 import { Message, User } from "@/core/models";
 import { useLayoutEffect, useRef, useState } from "react";
 
@@ -77,7 +77,7 @@ export const List = ({ user, messages, editing, setEditing, firstUnreadId, ...re
                 ref={listRef}
                 className={clsx(
                     'scrollbar-hidden',
-                    'relative flex-1 flex flex-col gap-3',
+                    'relative min-h-0 flex-1 flex flex-col gap-3',
                     editing ? 'overflow-y-hidden' : 'overflow-y-scroll'
                 )}
                 {...rest}
@@ -104,7 +104,6 @@ export const List = ({ user, messages, editing, setEditing, firstUnreadId, ...re
                     )
                     return null;
                 })}
-                <EditionBlur aria-hidden="true" editing={editing} />
                 <div aria-hidden="true" ref={bottomRef} />
             </ul>
             <ScrollToBottom

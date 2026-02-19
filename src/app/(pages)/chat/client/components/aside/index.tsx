@@ -74,9 +74,9 @@ export const Aside = ({ user, users, ...rest }: Props) => {
                     'insm:fixed insm:top-0 insm:left-0 insm:w-full insm:h-full insm:z-3',
                     isDragging ? null : 'insm:transition-transform insm:duration-300',
                     isDragging ? null : open ? 'insm:translate-x-0' : 'insm:-translate-x-full',
-                    'w-66 h-full p-3 border-r border-neutral-200',
+                    'w-66 h-full p-3 border-r border-indigo-400/5',
                     'flex-none flex flex-col gap-3',
-                    'bg-neutral-200/25 insm:bg-neutral-200',
+                    'bg-black/10 insm:bg-indigo-900',
                 )}
                 {...rest}
             >

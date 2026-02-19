@@ -1,8 +1,8 @@
 import { Photo, Title } from './elements';
 
 export const Header = () => (
-    <header className="w-fit mx-auto p-2 rounded-xl flex items-center justify-center gap-6">
-        <Photo alt='' src={'https://placehold.co/64x64.png'} size={64} />
+    <header className="p-2 flex items-center gap-3">
+        <Photo alt='' src='/hero.png' size={64} />
         <Title>chat dos campeões</Title>
     </header>
 )
