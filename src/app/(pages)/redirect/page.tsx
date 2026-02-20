@@ -1,4 +1,4 @@
-import { ClientRedirect } from "./client/ClientRedirect";
+import { Client } from "./client";
 import { createUserService } from "@/core/services";
 
 type Props = {
@@ -12,7 +12,7 @@ export default async function Page({ searchParams }: Props) {
     if (code) {
         const { authViaGitHub } = createUserService();
         const response = await authViaGitHub(code);
-        return <ClientRedirect user={response.data} />
+        return <Client user={response.data} />
     }
 
     return null;

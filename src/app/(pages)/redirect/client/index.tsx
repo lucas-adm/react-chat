@@ -6,7 +6,7 @@ import { User } from "@/core/models";
 import { useRouter } from "next/navigation";
 import { useUser } from "@/hooks";
 
-export const ClientRedirect = ({ user }: { user: User }) => {
+export const Client = ({ user }: { user: User }) => {
 
     const { setUser } = useUser();
     const router = useRouter();

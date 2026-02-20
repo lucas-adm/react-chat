@@ -113,7 +113,7 @@ export const Client = ({ users, messages: msgs }: Props) => {
             'flex',
         )}>
             <Aside user={user} users={users} />
-            <div className="w-full h-full p-3 flex flex-col gap-3 bg-black/10 insm:bg-transparent">
+            <div className="w-full h-full p-3 insm:px-2 flex flex-col gap-3 bg-black/10 insm:bg-transparent">
                 <Chat.Header />
                 <Separator />
                 <div className={clsx(
