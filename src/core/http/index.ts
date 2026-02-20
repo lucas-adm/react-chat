@@ -27,6 +27,7 @@ function parseJSON(text: string) {
 export function createHttpClient(url: string) {
   const createHeaders = (custom: HeadersInit | undefined): HeadersInit => ({
     'Content-Type': 'application/json',
+    'ngrok-skip-browser-warning': 'true',
     ...custom,
   });
 
