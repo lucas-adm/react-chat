@@ -14,37 +14,50 @@ export const Aside = ({ user, users, ...rest }: Props) => {
     const [open, setOpen] = useState(false);
     const [isDragging, setIsDragging] = useState(false);
     const [dragOffset, setDragOffset] = useState(0);
+    const [dragDirection, setDragDirection] = useState<'horizontal' | 'vertical' | null>(null);
     const startX = useRef<number | null>(null);
+    const startY = useRef<number | null>(null);
 
     const onTouchStart = (e: React.TouchEvent) => {
-        const x = e.touches[0].clientX;
-        startX.current = x;
-        setIsDragging(true);
+        startX.current = e.touches[0].clientX;
+        startY.current = e.touches[0].clientY;
+        setIsDragging(false);
+        setDragDirection(null);
     }
 
     const onTouchMove = (e: React.TouchEvent) => {
-        if (startX.current === null) return;
-        const currentX = e.touches[0].clientX;
-        const diff = currentX - startX.current;
-        if (!open && diff > 0) setDragOffset(Math.min(diff, window.innerWidth));
-        else if (open && diff < 0) setDragOffset(diff);
+        if (startX.current === null || startY.current === null) return;
+        const diffX = e.touches[0].clientX - startX.current;
+        const diffY = e.touches[0].clientY - startY.current;
+        if (dragDirection === null) {
+            if (Math.abs(diffX) < 5 && Math.abs(diffY) < 5) return;
+            const direction = Math.abs(diffX) > Math.abs(diffY) ? 'horizontal' : 'vertical';
+            setDragDirection(direction);
+            if (direction === 'horizontal') setIsDragging(true);
+            return;
+        }
+        if (dragDirection === 'vertical') return;
+        if (!open && diffX > 0) setDragOffset(Math.min(diffX, window.innerWidth));
+        else if (open && diffX < 0) setDragOffset(diffX);
     }
 
-    const onTouchEnd = (e: React.TouchEvent) => {
-        if (e) {
+    const onTouchEnd = () => {
+        if (dragDirection === 'horizontal') {
             if (startX.current === null) return;
             const screenWidth = window.innerWidth;
             let finalPosition: number;
             if (open) finalPosition = screenWidth + dragOffset;
             else finalPosition = dragOffset;
-            let shouldOpen: boolean;
-            if (open) shouldOpen = finalPosition > screenWidth * 0.75;
-            else shouldOpen = finalPosition > screenWidth * 0.25;
+            const shouldOpen = open
+                ? finalPosition > screenWidth * 0.75
+                : finalPosition > screenWidth * 0.25;
             setOpen(shouldOpen);
-            setIsDragging(false);
-            setDragOffset(0);
-            startX.current = null;
         }
+        setIsDragging(false);
+        setDragOffset(0);
+        setDragDirection(null);
+        startX.current = null;
+        startY.current = null;
     }
 
     const getTransform = () => {
