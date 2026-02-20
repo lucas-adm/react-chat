@@ -8,8 +8,11 @@ type ChatSocket = ReturnType<typeof createChatService>;
 
 export const WebSocketContext = createContext<ChatSocket>({} as ChatSocket);
 
-export const WebSocketProvider = ({ children }: { children: React.ReactNode }) => {
-
+export const WebSocketProvider = ({
+  children,
+}: {
+  children: React.ReactNode;
+}) => {
   const { user } = useUser();
   const [socket] = useState<ChatSocket>(() => createChatService());
   const connectedRef = useRef(false);
@@ -21,13 +24,12 @@ export const WebSocketProvider = ({ children }: { children: React.ReactNode }) =
     return () => {
       connectedRef.current = false;
       socket.disconnect();
-    }
-  }, [socket, user])
+    };
+  }, [socket, user]);
 
   return (
     <WebSocketContext.Provider value={socket}>
       {children}
     </WebSocketContext.Provider>
-  )
-
-}
+  );
+};

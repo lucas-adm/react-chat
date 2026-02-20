@@ -1,6 +1,6 @@
-import { User } from "@/core/models";
+import { User } from '@/core/models';
 
 export type TypingInput = {
-    user: User;
-    typing: boolean;
-}
+  user: User;
+  typing: boolean;
+};

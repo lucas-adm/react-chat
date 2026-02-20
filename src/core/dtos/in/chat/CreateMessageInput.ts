@@ -1,7 +1,7 @@
-import { User } from "@/core/models";
+import { User } from '@/core/models';
 
 export type CreateMessageInput = {
-    user: User
-    clientId: string,
-    content: string
-}
+  user: User;
+  clientId: string;
+  content: string;
+};

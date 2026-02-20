@@ -1,69 +1,90 @@
-import { CreateMessageInput, DeleteMessageInput, ReadMessageInput, TypingInput, UpdateMessageInput } from "../dtos/in";
-import { CreateMessageOutput, DeleteMessageOutput, PresenceOutput, ReadMessageOutput, SnapshotOutput, TypingOutput, UpdateMessageOutput } from "../dtos/out";
-import { createWebSocketClient } from "../ws";
-import { User } from "../models";
+import {
+  CreateMessageInput,
+  DeleteMessageInput,
+  ReadMessageInput,
+  TypingInput,
+  UpdateMessageInput,
+} from '../dtos/in';
+import {
+  CreateMessageOutput,
+  DeleteMessageOutput,
+  PresenceOutput,
+  ReadMessageOutput,
+  SnapshotOutput,
+  TypingOutput,
+  UpdateMessageOutput,
+} from '../dtos/out';
+import { createWebSocketClient } from '../ws';
+import { User } from '../models';
 
 export function createChatService() {
+  const url = process.env.NEXT_PUBLIC_WEBSOCKET!;
+  const socket = createWebSocketClient(url);
+  const pendingSubscriptions: (() => void)[] = [];
+  let isConnected = false;
 
-    const url = process.env.NEXT_PUBLIC_WEBSOCKET!;
-    const socket = createWebSocketClient(url);
-    const pendingSubscriptions: (() => void)[] = [];
-    let isConnected = false;
+  function connect(user: User | null, onConnected?: () => void) {
+    socket.connect(user, () => {
+      isConnected = true;
+      pendingSubscriptions.forEach((fn) => fn());
+      pendingSubscriptions.length = 0;
+      onConnected?.();
+    });
+  }
 
-    function connect(user: User | null, onConnected?: () => void) {
-        socket.connect(user, () => {
-            isConnected = true;
-            pendingSubscriptions.forEach(fn => fn());
-            pendingSubscriptions.length = 0;
-            onConnected?.();
-        })
-    }
+  function disconnect() {
+    isConnected = false;
+    socket.disconnect();
+  }
 
-    function disconnect() {
-        isConnected = false;
-        socket.disconnect();
-    }
+  function subscribeWhenConnected<T>(
+    topic: string,
+    callback: (output: T) => void,
+  ) {
+    const subscribe = () => socket.subscribe<T>(topic, callback);
+    if (isConnected) return subscribe();
+    return pendingSubscriptions.push(subscribe);
+  }
 
-    function subscribeWhenConnected<T>(topic: string, callback: (output: T) => void) {
-        const subscribe = () => socket.subscribe<T>(topic, callback);
-        if (isConnected) return subscribe();
-        return pendingSubscriptions.push(subscribe);
-    }
+  const createListener =
+    <T>(topic: string) =>
+    (callback: (output: T) => void) =>
+      subscribeWhenConnected<T>(topic, callback);
+  const createSender =
+    <T = void>(destination: string) =>
+    (payload?: T) =>
+      socket.send(destination, payload);
 
-    const createListener = <T>(topic: string) => (callback: (output: T) => void) => subscribeWhenConnected<T>(topic, callback);
-    const createSender = <T = void>(destination: string) => (payload?: T) => socket.send(destination, payload);
+  const sendSnapshotReq = createSender<object>('/app/snapshot');
+  const sendTyping = createSender<TypingInput>('/app/typing');
+  const sendMessage = createSender<CreateMessageInput>('/app/msg');
+  const readMessage = createSender<ReadMessageInput>('/app/read');
+  const deleteMessage = createSender<DeleteMessageInput>('/app/delete');
+  const updateMessage = createSender<UpdateMessageInput>('/app/update');
 
-    const sendSnapshotReq = createSender<object>('/app/snapshot');
-    const sendTyping = createSender<TypingInput>('/app/typing');
-    const sendMessage = createSender<CreateMessageInput>('/app/msg');
-    const readMessage = createSender<ReadMessageInput>('/app/read');
-    const deleteMessage = createSender<DeleteMessageInput>('/app/delete')
-    const updateMessage = createSender<UpdateMessageInput>('/app/update');
+  const onSnapshot = createListener<SnapshotOutput>('/user/queue/snapshot');
+  const onPresence = createListener<PresenceOutput>('/topics/presence');
+  const onTyping = createListener<TypingOutput>('/topics/typing');
+  const onMessage = createListener<CreateMessageOutput>('/topics/msg');
+  const onRead = createListener<ReadMessageOutput>('/topics/read');
+  const onDelete = createListener<DeleteMessageOutput>('/topics/delete');
+  const onUpdate = createListener<UpdateMessageOutput>('/topics/update');
 
-    const onSnapshot = createListener<SnapshotOutput>('/user/queue/snapshot');
-    const onPresence = createListener<PresenceOutput>('/topics/presence');
-    const onTyping = createListener<TypingOutput>('/topics/typing');
-    const onMessage = createListener<CreateMessageOutput>('/topics/msg');
-    const onRead = createListener<ReadMessageOutput>('/topics/read');
-    const onDelete = createListener<DeleteMessageOutput>('/topics/delete')
-    const onUpdate = createListener<UpdateMessageOutput>('/topics/update')
-
-    return {
-        connect,
-        disconnect,
-        sendSnapshotReq,
-        sendTyping,
-        sendMessage,
-        readMessage,
-        deleteMessage,
-        updateMessage,
-        onSnapshot,
-        onPresence,
-        onTyping,
-        onMessage,
-        onRead,
-        onDelete,
-        onUpdate
-    }
-
+  return {
+    connect,
+    disconnect,
+    sendSnapshotReq,
+    sendTyping,
+    sendMessage,
+    readMessage,
+    deleteMessage,
+    updateMessage,
+    onSnapshot,
+    onPresence,
+    onTyping,
+    onMessage,
+    onRead,
+    onDelete,
+    onUpdate,
+  };
 }

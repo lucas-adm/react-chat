@@ -1,4 +1,4 @@
 export type UpdateMessageInput = {
-    id: string,
-    content: string
-}
+  id: string;
+  content: string;
+};

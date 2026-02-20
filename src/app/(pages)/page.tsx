@@ -1,6 +1,6 @@
 import { clsx } from 'clsx';
-import { IconBrandGithub } from "@tabler/icons-react";
-import Link from "next/link";
+import { IconBrandGithub } from '@tabler/icons-react';
+import Link from 'next/link';
 
 export default function Page() {
   return (
@@ -16,7 +16,7 @@ export default function Page() {
         'transition-all duration-333 ease-linear',
         'hover:border-transparent hover:bg-indigo-50 hover:drop-shadow-indigo-50',
         'focus-visible:border-transparent focus-visible:bg-indigo-50 focus-visible:drop-shadow-indigo-50',
-        'active:scale-85'
+        'active:scale-85',
       )}
     >
       <IconBrandGithub
@@ -27,9 +27,9 @@ export default function Page() {
           'scale-75',
           'transition-all duration-333 ease-linear',
           'group-hover:text-indigo-600 group-hover:scale-100 group-hover:drop-shadow-indigo-400',
-          'group-focus-visible:text-indigo-600 group-focus-visible:scale-100'
+          'group-focus-visible:text-indigo-600 group-focus-visible:scale-100',
         )}
       />
     </Link>
-  )
+  );
 }

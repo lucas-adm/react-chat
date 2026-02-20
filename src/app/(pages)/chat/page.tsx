@@ -1,14 +1,12 @@
-import { Client } from "./client";
-import { createMessageService, createUserService } from "@/core/services";
+import { Client } from './client';
+import { createMessageService, createUserService } from '@/core/services';
 
 export default async function Page() {
+  const { findUsers } = createUserService();
+  const { findMessages } = createMessageService();
 
-    const { findUsers } = createUserService();
-    const { findMessages } = createMessageService();
+  const users = await findUsers();
+  const messages = await findMessages();
 
-    const users = await findUsers();
-    const messages = await findMessages();
-
-    return <Client users={users.data} messages={messages.data} />;
-
+  return <Client users={users.data} messages={messages.data} />;
 }

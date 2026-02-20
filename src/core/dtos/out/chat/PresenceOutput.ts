@@ -1,6 +1,6 @@
-import { User } from "@/core/models";
+import { User } from '@/core/models';
 
 export type PresenceOutput = {
-    user: User;
-    online: boolean;
-}
+  user: User;
+  online: boolean;
+};
