@@ -16,6 +16,12 @@ export const ClientRedirect = ({ user }: { user: User }) => {
         router.push('/chat');
     }, [router, setUser, user])
 
-    return null;
+    return (
+        <div aria-hidden='true' className='absolute top-1/2 left-1/2 -translate-1/2'>
+            <span aria-hidden="true" className="animated-dots" />
+            <span aria-hidden="true" className="animated-dots" />
+            <span aria-hidden="true" className="animated-dots" />
+        </div>
+    )
 
 }

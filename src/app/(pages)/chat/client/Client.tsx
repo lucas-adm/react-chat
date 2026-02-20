@@ -106,56 +106,44 @@ export const Client = ({ users, messages: msgs }: Props) => {
     }, [editing])
 
     if (messages && (firstUnreadId !== undefined)) return (
-        <main
-            style={{
-                background: `radial-gradient(
-                ellipse at bottom,
-                oklch(67.3% 0.182 276.935) 0%,
-                oklch(58.5% 0.233 277.117) 35%,
-                oklch(35.9% 0.144 278.697) 65%,
-                oklch(25.7% 0.09 281.288) 100%
-            )`}}
-            className="w-screen h-screen p-2 inmd:p-0 flex items-center justify-items-center insm:bg-none! insm:bg-indigo-950!"
-        >
-            <section className={clsx(
-                'overflow-clip',
-                'relative w-full max-w-270 h-full max-h-180 inmd:max-h-full',
-                'mx-auto rounded-2xl inmd:rounded-none border border-black/5',
-                'flex',
-            )}>
-                <Aside user={user} users={users} />
-                <div className="w-full h-full p-3 flex flex-col gap-3 bg-black/10 insm:bg-transparent">
-                    <Chat.Header />
-                    <Separator />
-                    <div className={clsx(
-                        'overflow-clip',
-                        'relative w-full min-h-0 h-full',
-                        'px-8 py-4 insm:p-0 rounded-2xl',
-                        'flex flex-col gap-3',
-                        'bg-indigo-900/25 insm:bg-transparent'
-                    )}>
-                        <div
-                            aria-hidden='true'
-                            style={{
-                                backgroundImage: `url('/pattern.jpg')`,
-                                backgroundSize: 'contain',
-                                backgroundRepeat: 'repeat',
-                            }}
-                            className='select-none pointer-events-none insm:hidden absolute inset-0 opacity-2'
-                        />
-                        <Chat.Blur editing={editing} />
-                        <Chat.List
-                            user={user}
-                            messages={messages}
-                            editing={editing}
-                            setEditing={setEditing}
-                            firstUnreadId={firstUnreadId}
-                        />
-                        <Chat.Footer editing={editing} setEditing={setEditing} />
-                    </div>
+        <section className={clsx(
+            'overflow-clip',
+            'relative w-full max-w-270 h-full max-h-180 inmd:max-h-full',
+            'mx-auto rounded-2xl inmd:rounded-none border border-black/5',
+            'flex',
+        )}>
+            <Aside user={user} users={users} />
+            <div className="w-full h-full p-3 flex flex-col gap-3 bg-black/10 insm:bg-transparent">
+                <Chat.Header />
+                <Separator />
+                <div className={clsx(
+                    'overflow-clip',
+                    'relative w-full min-h-0 h-full',
+                    'px-8 py-4 insm:p-0 rounded-2xl',
+                    'flex flex-col gap-3',
+                    'bg-indigo-900/25 insm:bg-transparent'
+                )}>
+                    <div
+                        aria-hidden='true'
+                        style={{
+                            backgroundImage: `url('/pattern.jpg')`,
+                            backgroundSize: 'contain',
+                            backgroundRepeat: 'repeat',
+                        }}
+                        className='select-none pointer-events-none insm:hidden absolute inset-0 opacity-2'
+                    />
+                    <Chat.Blur editing={editing} />
+                    <Chat.List
+                        user={user}
+                        messages={messages}
+                        editing={editing}
+                        setEditing={setEditing}
+                        firstUnreadId={firstUnreadId}
+                    />
+                    <Chat.Footer editing={editing} setEditing={setEditing} />
                 </div>
-            </section>
-        </main>
+            </div>
+        </section>
     )
 
     return null;
