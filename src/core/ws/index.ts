@@ -2,9 +2,9 @@ import { Client } from '@stomp/stompjs';
 import { User } from '../models';
 import SockJS from 'sockjs-client';
 
-export function createWebSocketClient(url: string) {
+export function createWebSocketClient() {
   const client = new Client({
-    webSocketFactory: () => new SockJS(`${url}/livechat`),
+    webSocketFactory: () => new SockJS('/livechat'),
     reconnectDelay: 5000,
   });
 
