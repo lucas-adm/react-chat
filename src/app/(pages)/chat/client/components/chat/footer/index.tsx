@@ -29,7 +29,7 @@ export const Footer = ({ editing, setEditing, ...rest }: Props) => {
     resolver: zodResolver(createMessageData),
   });
 
-  const { trigger, getValues, reset, setFocus } = createMessage;
+  const { trigger, getValues, reset } = createMessage;
 
   const { user } = useUser();
   const { sendTyping, onTyping, sendMessage, updateMessage } = useChat();
@@ -81,7 +81,6 @@ export const Footer = ({ editing, setEditing, ...rest }: Props) => {
     sendMessage(payload);
     setMessages((prev) => (prev ? [...prev, normalized] : [normalized]));
     reset({ content: '' });
-    requestAnimationFrame(() => setFocus('content'));
     isTypingRef.current = false;
     if (textareaRef.current) textareaRef.current.style.height = 'auto';
     return;
@@ -120,6 +119,15 @@ export const Footer = ({ editing, setEditing, ...rest }: Props) => {
     return null;
   };
 
+  const handleManualSubmit = async () => {
+    const isValid = await trigger();
+    if (user && isValid) {
+      const data = getValues();
+      if (editing) sendUpdateMessage(user, editing, data);
+      else sendCreateMessage(user, data);
+    }
+  };
+
   return (
     <footer className="z-2 relative" {...rest}>
       <Typing typing={typingUsers} />
@@ -154,10 +162,20 @@ export const Footer = ({ editing, setEditing, ...rest }: Props) => {
                   icon={IconX}
                   onClick={() => setEditing(null)}
                 />
-                <Button type="submit" icon={IconCheck} />
+                <Button
+                  type="button"
+                  onMouseDown={(e) => e.preventDefault()}
+                  onClick={handleManualSubmit}
+                  icon={IconCheck}
+                />
               </>
             ) : (
-              <Button type="submit" icon={IconArrowRight} />
+              <Button
+                type="button"
+                onMouseDown={(e) => e.preventDefault()}
+                onClick={handleManualSubmit}
+                icon={IconArrowRight}
+              />
             )}
           </form>
         </FormProvider>

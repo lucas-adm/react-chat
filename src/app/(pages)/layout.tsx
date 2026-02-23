@@ -23,7 +23,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                                     oklch(25.7% 0.09 281.288) 100%
                                 )`,
                 }}
-                className="w-screen h-screen p-2 inmd:p-0 flex items-center justify-items-center insm:bg-none! insm:bg-indigo-950!"
+                className="max-w-full w-screen h-screen inmd:h-svh p-2 inmd:p-0 flex items-center justify-items-center insm:bg-none! insm:bg-indigo-950!"
               >
                 {children}
               </main>

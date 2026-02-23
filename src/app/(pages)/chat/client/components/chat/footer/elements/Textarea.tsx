@@ -59,12 +59,17 @@ export const Textarea = forwardRef<HTMLTextAreaElement, Props>(
     };
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+      const isDesktop =
+        window.matchMedia('(hover: hover)').matches &&
+        window.matchMedia('(pointer: fine)').matches;
       const textarea = localRef.current;
       if (textarea) {
-        if (e.shiftKey && e.key === 'Enter') return;
-        if (e.key === 'Enter') {
-          e.preventDefault();
-          e.currentTarget.form?.requestSubmit();
+        if (isDesktop) {
+          if (e.shiftKey && e.key === 'Enter') return;
+          if (e.key === 'Enter') {
+            e.preventDefault();
+            e.currentTarget.form?.requestSubmit();
+          }
         }
       }
       return;
