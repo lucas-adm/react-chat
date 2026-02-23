@@ -18,7 +18,10 @@ export const Avatar = ({
 }: Props) => (
   <figure
     style={{ width: size, height: size }}
-    className="select-none relative pointer-events-none flex-none"
+    className={clsx(
+      'select-none relative pointer-events-none flex-none',
+      isOnline ? 'grayscale-0' : 'grayscale-75',
+    )}
     {...rest}
   >
     <Image

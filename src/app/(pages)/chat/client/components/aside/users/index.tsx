@@ -1,5 +1,6 @@
-import { Item } from './elements';
+import { Item, Title } from './elements';
 import { normalize } from '@/utils';
+import { Separator } from '../../utils';
 import { useChat, useUser } from '@/hooks';
 import { useEffect, useMemo } from 'react';
 import { User } from '@/core/models';
@@ -14,14 +15,17 @@ export const List = ({ users: usrs, ...rest }: Props) => {
   const { user } = useUser();
   const { users, setUsers } = useUsers();
 
-  const sorted = useMemo(() => {
+  const { online, offline } = useMemo(() => {
     if (users) {
-      return [...users].sort((a, b) => {
-        if (a.online !== b.online) return a.online ? -1 : 1;
-        return a.displayName.localeCompare(b.displayName);
-      });
+      const online = users
+        .filter((u) => u.online)
+        .sort((a, b) => a.displayName.localeCompare(b.displayName));
+      const offline = users
+        .filter((u) => !u.online)
+        .sort((a, b) => a.displayName.localeCompare(b.displayName));
+      return { online, offline };
     }
-    return null;
+    return { online: [], offline: [] };
   }, [users]);
 
   useEffect(() => {
@@ -58,17 +62,22 @@ export const List = ({ users: usrs, ...rest }: Props) => {
     });
   }, [onPresence, setUsers]);
 
-  if (sorted)
+  if (users)
     return (
       <ul
         className="overflow-scroll scrollbar-hidden flex flex-col gap-3"
         {...rest}
       >
-        {sorted.map((u) => (
+        <Title users={online} title="Online" />
+        {online.map((u) => (
+          <Item key={u.id} user={u} />
+        ))}
+        {online.length > 0 ? <Separator /> : null}
+        <Title users={offline} title="Offline" className="saturate-50" />
+        {offline.map((u) => (
           <Item key={u.id} user={u} />
         ))}
       </ul>
     );
-
   return null;
 };
