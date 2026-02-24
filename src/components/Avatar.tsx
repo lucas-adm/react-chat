@@ -20,7 +20,7 @@ export const Avatar = ({
     style={{ width: size, height: size }}
     className={clsx(
       'select-none relative pointer-events-none flex-none',
-      isOnline ? 'grayscale-0' : 'grayscale-75',
+      useStatus ? (isOnline ? 'grayscale-0' : 'grayscale-75') : 'grayscale-0',
     )}
     {...rest}
   >

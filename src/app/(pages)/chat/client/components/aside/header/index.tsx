@@ -1,5 +1,5 @@
 import { Avatar } from '@/components';
-import { Info, Options } from './elements';
+import { Info, Options, Status } from './elements';
 import { Separator } from '../../utils';
 import { User } from '@/core/models';
 
@@ -12,12 +12,19 @@ export const Header = ({ user, ...rest }: Props) => {
     return (
       <>
         <header
-          className="relative w-full p-2 rounded-xl flex items-center gap-2"
+          className="relative w-full p-2 rounded-xl flex flex-col items-center gap-3"
           {...rest}
         >
           <Options hidden />
-          <Avatar src={user.avatar} useStatus isOnline={user.online} />
+          <Avatar
+            size={72}
+            src={user.avatar}
+            useStatus
+            isOnline={user.online}
+          />
+
           <Info name={user.displayName} bio={user.bio} />
+          <Status />
         </header>
         <Separator />
       </>
