@@ -7,7 +7,7 @@ import {
   UnreadsSeparator,
 } from './elements';
 import { Message, User } from '@/core/models';
-import { useLayoutEffect, useRef, useState } from 'react';
+import { useLayoutEffect, useMemo, useRef, useState } from 'react';
 
 type Props = React.HTMLAttributes<HTMLUListElement> & {
   user: User | null;
@@ -28,18 +28,19 @@ export const List = ({
   const [isAtBottom, setIsAtBottom] = useState<boolean>(true);
   const listRef = useRef<HTMLUListElement | null>(null);
   const unreadsRef = useRef<HTMLLIElement | null>(null);
+  const initialUnreadIdRef = useRef<string | null>(firstUnreadId);
   const bottomRef = useRef<HTMLDivElement | null>(null);
   const isAtBottomRef = useRef<boolean>(true);
 
   useLayoutEffect(() => {
-    if (firstUnreadId) {
+    if (initialUnreadIdRef.current) {
       const unreads = unreadsRef.current;
       if (unreads) unreads.scrollIntoView({ behavior: 'auto' });
     }
-  }, [firstUnreadId]);
+  }, []);
 
   useLayoutEffect(() => {
-    if (firstUnreadId) return;
+    if (initialUnreadIdRef.current) return;
     const list = listRef.current;
     if (list) {
       let hasResized: boolean = false;
@@ -53,7 +54,7 @@ export const List = ({
       observer.observe(list);
       return () => observer.disconnect();
     }
-  }, [firstUnreadId]);
+  }, []);
 
   useLayoutEffect(() => {
     const list = listRef.current;
@@ -71,11 +72,11 @@ export const List = ({
   }, []);
 
   useLayoutEffect(() => {
-    if (firstUnreadId) return;
+    if (initialUnreadIdRef.current) return;
     const bottom = bottomRef.current;
     if (isAtBottomRef.current && bottom)
       bottom.scrollIntoView({ behavior: 'smooth' });
-  }, [firstUnreadId, messages]);
+  }, [messages]);
 
   const handleNavigation = () => {
     if (bottomRef.current)
@@ -83,7 +84,10 @@ export const List = ({
     return;
   };
 
-  const items: ChatItem[] = groupMessagesByDay(messages, firstUnreadId ?? null);
+  const items: ChatItem[] = useMemo(
+    () => groupMessagesByDay(messages, firstUnreadId ?? null),
+    [firstUnreadId, messages],
+  );
 
   return (
     <>
