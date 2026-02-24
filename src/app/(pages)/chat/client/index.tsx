@@ -5,7 +5,7 @@ import { clsx } from 'clsx';
 import { Message, User } from '@/core/models';
 import { normalize } from '@/utils';
 import { useChat, useMessages, useUser } from '@/hooks';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 type Props = {
   users: User[];
@@ -20,11 +20,8 @@ export const Client = ({ users, messages: msgs }: Props) => {
   const [firstUnreadId, setFirstUnreadId] = useState<string | null | undefined>(
     undefined,
   );
-
-  useEffect(
-    () => setMessages(msgs.map((m) => normalize.message(m, 'sent'))),
-    [msgs, setMessages],
-  );
+  const insideAudioRef = useRef<HTMLAudioElement | null>(null);
+  const outsideAudioRef = useRef<HTMLAudioElement | null>(null);
 
   const unreads: number = useMemo(() => {
     if (messages)
@@ -33,6 +30,18 @@ export const Client = ({ users, messages: msgs }: Props) => {
         .filter((m) => !m.text.read).length;
     return 0;
   }, [messages, user]);
+
+  useEffect(() => {
+    insideAudioRef.current = new Audio('/sounds/notification/inside.mp3');
+    outsideAudioRef.current = new Audio('/sounds/notification/outside.mp3');
+    if (insideAudioRef.current) insideAudioRef.current.volume = 0.25;
+    if (outsideAudioRef.current) outsideAudioRef.current.volume = 0.25;
+  }, []);
+
+  useEffect(
+    () => setMessages(msgs.map((m) => normalize.message(m, 'sent'))),
+    [msgs, setMessages],
+  );
 
   useEffect(() => {
     document.title = unreads > 0 ? `Chat (${unreads})` : 'Chat';
@@ -54,11 +63,12 @@ export const Client = ({ users, messages: msgs }: Props) => {
 
   useEffect(() => {
     onMessage((output) => {
+      const isFromCurrentUser = user && user.id === output.user.id;
       setMessages((prev) =>
         prev
           ? prev.some((m) => m.text.id === output.text.id)
             ? prev
-            : user && user.id === output.user.id
+            : isFromCurrentUser
               ? prev.map((m) =>
                   m.text.clientId === output.text.clientId
                     ? normalize.message(output, 'sent')
@@ -67,6 +77,12 @@ export const Client = ({ users, messages: msgs }: Props) => {
               : [...prev, normalize.message(output, 'sent')]
           : [normalize.message(output, 'sent')],
       );
+      if (insideAudioRef.current && outsideAudioRef.current) {
+        if (isFromCurrentUser) return;
+        const hidden = document.hidden;
+        const audio = hidden ? outsideAudioRef.current : insideAudioRef.current;
+        audio.play();
+      }
     });
   }, [onMessage, setMessages, user]);
 
