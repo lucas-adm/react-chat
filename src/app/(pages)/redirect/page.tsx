@@ -7,12 +7,13 @@ type Props = {
 
 export default async function Page({ searchParams }: Props) {
   const { code } = await searchParams;
+  const { authViaRandomUser, authViaGitHub } = createUserService();
 
   if (code) {
-    const { authViaGitHub } = createUserService();
     const response = await authViaGitHub(code);
     return <Client user={response.data} />;
   }
 
-  return null;
+  const response = await authViaRandomUser();
+  return <Client user={response.data} />;
 }

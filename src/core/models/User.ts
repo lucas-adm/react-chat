@@ -3,6 +3,6 @@ export type User = {
   avatar: string;
   username: string;
   displayName: string;
-  bio: string;
+  bio: string | null;
   online: boolean;
 };

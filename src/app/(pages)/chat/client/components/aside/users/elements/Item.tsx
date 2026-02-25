@@ -15,9 +15,9 @@ export const Item = ({ user, ...rest }: Props) => (
       <p className="truncate font-semibold text-sm text-indigo-200">
         {user.displayName}
       </p>
-      <p title="Message" className="truncate text-xs text-indigo-300">
-        {user.bio}
-      </p>
+      {user.bio ? (
+        <p className="truncate text-xs text-indigo-300">{user.bio}</p>
+      ) : null}
     </div>
   </li>
 );
