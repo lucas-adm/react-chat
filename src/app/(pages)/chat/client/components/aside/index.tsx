@@ -7,9 +7,10 @@ import { useRef, useState } from 'react';
 type Props = React.HTMLAttributes<HTMLElement> & {
   user: User | null;
   users: User[];
+  onlineUsers: User['id'][];
 };
 
-export const Aside = ({ user, users, ...rest }: Props) => {
+export const Aside = ({ user, users, onlineUsers, ...rest }: Props) => {
   const [open, setOpen] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const [dragOffset, setDragOffset] = useState(0);
@@ -99,7 +100,7 @@ export const Aside = ({ user, users, ...rest }: Props) => {
         {...rest}
       >
         <Header user={user} />
-        <List users={users} />
+        <List users={users} onlineUsers={onlineUsers} />
       </aside>
     </>
   );

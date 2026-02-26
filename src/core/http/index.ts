@@ -50,6 +50,7 @@ export function createHttpClient(url: string) {
   ): Promise<ApiResponse<T>> => {
     const uri = `${url}${endpoint.startsWith('/') ? endpoint : `/${endpoint}`}`;
     const response = await fetch(uri, {
+      cache: 'no-cache',
       method,
       headers: createHeaders(options.headers),
       body: options.body ? JSON.stringify(options.body) : undefined,

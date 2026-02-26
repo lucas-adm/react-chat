@@ -9,10 +9,11 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 
 type Props = {
   users: User[];
+  onlineUsers: User['id'][];
   messages: Message[];
 };
 
-export const Client = ({ users, messages: msgs }: Props) => {
+export const Client = ({ users, onlineUsers, messages: msgs }: Props) => {
   const { onMessage, onRead, onDelete, onUpdate } = useChat();
   const { user } = useUser();
   const { messages, setMessages } = useMessages();
@@ -150,7 +151,7 @@ export const Client = ({ users, messages: msgs }: Props) => {
           'flex',
         )}
       >
-        <Aside user={user} users={users} />
+        <Aside user={user} users={users} onlineUsers={onlineUsers} />
         <div className="w-full h-full p-3 insm:px-2 flex flex-col gap-3 bg-black/10 insm:bg-transparent">
           <Chat.Header />
           <Separator />

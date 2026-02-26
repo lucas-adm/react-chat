@@ -10,7 +10,6 @@ import {
   DeleteMessageOutput,
   PresenceOutput,
   ReadMessageOutput,
-  SnapshotOutput,
   TypingOutput,
   UpdateMessageOutput,
 } from '../dtos/out';
@@ -55,14 +54,12 @@ export function createChatService() {
     (payload?: T) =>
       socket.send(destination, payload);
 
-  const sendSnapshotReq = createSender<object>('/app/snapshot');
   const sendTyping = createSender<TypingInput>('/app/typing');
   const sendMessage = createSender<CreateMessageInput>('/app/msg');
   const readMessage = createSender<ReadMessageInput>('/app/read');
   const deleteMessage = createSender<DeleteMessageInput>('/app/delete');
   const updateMessage = createSender<UpdateMessageInput>('/app/update');
 
-  const onSnapshot = createListener<SnapshotOutput>('/user/queue/snapshot');
   const onPresence = createListener<PresenceOutput>('/topics/presence');
   const onTyping = createListener<TypingOutput>('/topics/typing');
   const onMessage = createListener<CreateMessageOutput>('/topics/msg');
@@ -73,13 +70,11 @@ export function createChatService() {
   return {
     connect,
     disconnect,
-    sendSnapshotReq,
     sendTyping,
     sendMessage,
     readMessage,
     deleteMessage,
     updateMessage,
-    onSnapshot,
     onPresence,
     onTyping,
     onMessage,

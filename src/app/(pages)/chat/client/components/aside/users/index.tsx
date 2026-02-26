@@ -2,52 +2,49 @@ import { Item, Title } from './elements';
 import { normalize } from '@/utils';
 import { Separator } from '../../utils';
 import { useChat, useUser } from '@/hooks';
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { User } from '@/core/models';
 import { useUsers } from '@/hooks/Users';
 
 type Props = React.HTMLAttributes<HTMLUListElement> & {
   users: User[];
+  onlineUsers: User['id'][];
 };
 
-export const List = ({ users: usrs, ...rest }: Props) => {
-  const { sendSnapshotReq, onSnapshot, onPresence } = useChat();
+export const List = ({ users: usrs, onlineUsers, ...rest }: Props) => {
+  const { onPresence } = useChat();
   const { user } = useUser();
   const { users, setUsers } = useUsers();
 
+  const [onlineIds, setOnlineIds] = useState<User['id'][]>(onlineUsers);
   const { online, offline } = useMemo(() => {
     if (users) {
-      const online = users
+      const normalized = users.map((u) =>
+        normalize.user(u, onlineIds.includes(u.id)),
+      );
+      const online = normalized
         .filter((u) => u.online)
         .sort((a, b) => a.displayName.localeCompare(b.displayName));
-      const offline = users
+      const offline = normalized
         .filter((u) => !u.online)
         .sort((a, b) => a.displayName.localeCompare(b.displayName));
       return { online, offline };
     }
     return { online: [], offline: [] };
-  }, [users]);
+  }, [onlineIds, users]);
 
   useEffect(() => {
     if (user) setUsers(usrs.filter((u) => u.id !== user.id));
     else setUsers(usrs);
-    sendSnapshotReq();
-  }, [sendSnapshotReq, setUsers, user, usrs]);
-
-  useEffect(() => {
-    onSnapshot((output) => {
-      setUsers((prev) =>
-        prev
-          ? prev.map((u) =>
-              output.includes(u.id) ? normalize.user(u, true) : u,
-            )
-          : prev,
-      );
-    });
-  }, [onSnapshot, setUsers]);
+  }, [setUsers, user, usrs]);
 
   useEffect(() => {
     onPresence((output) => {
+      setOnlineIds((prev) =>
+        output.online
+          ? [...prev, output.user.id]
+          : prev.filter((id) => id !== output.user.id),
+      );
       setUsers((prev) =>
         prev
           ? prev.some((u) => u.id === output.user.id)
@@ -60,7 +57,7 @@ export const List = ({ users: usrs, ...rest }: Props) => {
           : [normalize.user(output.user, output.online)],
       );
     });
-  }, [onPresence, setUsers]);
+  }, [onPresence, onlineIds, setUsers]);
 
   if (users)
     return (

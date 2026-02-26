@@ -1,4 +1,5 @@
 import { createHttpClient } from '../http';
+import { OnlineIdsOutput } from '../dtos/out';
 import { User } from '../models';
 
 export function createUserService() {
@@ -17,5 +18,9 @@ export function createUserService() {
     return api.get<User[]>('/users', undefined);
   }
 
-  return { authViaRandomUser, authViaGitHub, findUsers };
+  async function findOnlineUsers() {
+    return api.get<OnlineIdsOutput>('/users/online', undefined);
+  }
+
+  return { authViaRandomUser, authViaGitHub, findUsers, findOnlineUsers };
 }
